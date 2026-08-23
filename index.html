@@ -18,13 +18,17 @@
 
   <nav id="mainNav">
     <div class="nav-name">Taiane Almeida Santos</div>
-    <div class="nav-links">
+    <div class="nav-links" id="navLinks">
       <a href="#livro">O Livro</a>
       <a href="#autora">Autora</a>
       <a href="#depoimentos">Depoimentos</a>
       <a href="#contato">Contato</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
 
   <!-- HERO -->
   <section class="hero">
@@ -33,36 +37,15 @@
     <div class="hero-content">
       <div class="eyebrow">Lançamento do livro</div>
       <h1 class="fold-title" id="foldTitle">
-        <span class="line1">NECROPOLÍTICA</span><br>
-        <span class="line2">E REFLEXÕES</span>
+        <span class="line2">NECROPOLÍTICA</span><br>
+        <span class="line1">E REFLEXÕES</span>
       </h1>
-      <p class="hero-sub">Sobre a população negra no território baiano</p>
+      <h1 class="hero-sub">ACERCA DA POPULAÇÃO NEGRA NO TERRITORIO BAIANO</h1>
       <p class="hero-tagline">Juventude, Segurança pública e Corpos silenciados</p>
-
-      <div class="countdown-wrap" id="countdown">
-        <div class="cd-box">
-          <div class="cd-num" id="cd-days">--</div>
-          <div class="cd-label">dias</div>
-        </div>
-        <div class="cd-box">
-          <div class="cd-num" id="cd-hours">--</div>
-          <div class="cd-label">horas</div>
-        </div>
-      </div>
-      <p class="cd-caption">Faltam para o lançamento, no dia 11 de setembro</p>
-    </div>
-    <div class="scroll-cue"><span>role</span><span class="line"></span></div>
-  </section>
-
-  <!-- QUOTE 1 - left -->
-  <section class="quote-section">
-    <div class="container">
-      <blockquote class="quote-block quote-left reveal from-left">
-        Reconhecer os mecanismos que naturalizam determinadas mortes significa também reafirmar o direito à vida, à
-        memória, à justiça e à dignidade humana.
-      </blockquote>
     </div>
   </section>
+
+  <!-- QUOTE 1 - left, paired with a photo of the author -->
 
   <!-- SINOPSE -->
   <section class="sinopse" id="sinopse">
@@ -79,12 +62,24 @@
         <p><em>Este texto é um rascunho para o protótipo; pode ser substituído a qualquer momento pela sinopse
             definitiva.</em></p>
       </div>
-      <div class="reveal from-right">
-        <img src="assets/capa-livro.jpg" alt="Capa do livro Necropolítica e Reflexões"
-          style="box-shadow:0 30px 70px rgba(0,0,0,.25); border-radius:2px;">
+      <div class="reveal from-right sinopse-mockup">
+        <img src="assets/livro-mockup.webp" alt="Mockup do livro Necropolítica e Reflexões">
       </div>
     </div>
   </section>
+
+  <section class="quote-section">
+    <div class="container quote-photo-grid">
+      <blockquote class="quote-block quote-left reveal from-left">
+        Reconhecer os mecanismos que naturalizam determinadas mortes significa também reafirmar o direito à vida, à
+        memória, à justiça e à dignidade humana.
+      </blockquote>
+      <div class="quote-photo-frame reveal from-right">
+        <img src="assets/taiane-candid.jpg" alt="Taiane Almeida Santos">
+      </div>
+    </div>
+  </section>
+
 
   <!-- QUOTE 2 - center on dark -->
   <section class="quote-section dark cursor-grid-bg">
@@ -102,7 +97,31 @@
     <canvas class="cursor-grid-canvas" aria-hidden="true"></canvas>
     <div class="container livro-grid">
       <div class="book-cover-wrap reveal from-left">
-        <img src="assets/capa-livro.jpg" alt="Capa do livro">
+        <img src="assets/livro-capa-contracapa.webp" alt="Capa e contracapa do livro Necropolítica e Reflexões">
+        <div class="livro-cta">
+          <div class="countdown-wrap" id="countdown">
+            <div class="cd-box">
+              <div class="cd-num" id="cd-days">--</div>
+              <div class="cd-label">dias</div>
+            </div>
+            <div class="cd-box">
+              <div class="cd-num" id="cd-hours">--</div>
+              <div class="cd-label">horas</div>
+            </div>
+          </div>
+          <p class="cd-caption">Faltam para o lançamento, no dia 11 de setembro</p>
+          <a href="#" class="amazon-btn" id="amazonBtn">
+            <svg class="amazon-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M15.93 17.09c-2.1 1.55-5.14 2.38-7.76 2.38-3.67 0-6.98-1.36-9.48-3.62-.2-.18-.02-.42.22-.28 2.7 1.57 6.04 2.52 9.49 2.52 2.33 0 4.89-.48 7.24-1.48.35-.15.65.23.29.48z" />
+              <path
+                d="M16.8 16.05c-.27-.34-1.77-.16-2.45-.08-.2.02-.24-.15-.05-.29 1.2-.84 3.16-.6 3.39-.32.23.29-.06 2.28-1.18 3.23-.17.15-.34.07-.26-.12.26-.63.83-2.08.55-2.42z" />
+              <path
+                d="M14.5 7.5c0-.8.02-1.47-.4-2.01-.35-.46-.93-.68-1.62-.68-1.14 0-2.15.6-2.4 2.02-.05.27-.25.27-.42.24l-1.68-.18c-.14-.03-.3-.14-.26-.35.4-2.1 2.28-3.44 4.87-3.44 1.3 0 3 .35 4.02 1.35 1.02 1 1.1 2.35 1.1 3.6v4.63c0 .93.38 1.34.74 1.83.13.18.16.4-.01.54-.4.33-1.1.94-1.49 1.28-.19.16-.4.17-.55.05-.77-.67-.9-.98-1.33-1.62-1.27 1.3-2.17 1.69-3.82 1.69-1.94 0-3.46-1.2-3.46-3.6 0-1.87.99-3.14 2.4-3.76 1.22-.55 2.94-.65 4.25-.8v-.42zm-1.63 4.9c.32-.55.32-1.07.32-1.68v-.9c-1.65 0-3.39.35-3.39 2.29 0 .99.51 1.65 1.39 1.65.64 0 1.21-.4 1.68-1.36z" />
+            </svg>
+            Comprar na Amazon
+          </a>
+        </div>
       </div>
       <div class="reveal from-right">
         <span class="section-label">O Livro</span>
@@ -114,17 +133,6 @@
           <span class="meta-pill">Apoio: Política Nacional Aldir Blanc</span>
           <span class="meta-pill">Feira de Santana, BA</span>
         </div>
-        <a href="#" class="amazon-btn" id="amazonBtn">
-          <svg class="amazon-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M15.93 17.09c-2.1 1.55-5.14 2.38-7.76 2.38-3.67 0-6.98-1.36-9.48-3.62-.2-.18-.02-.42.22-.28 2.7 1.57 6.04 2.52 9.49 2.52 2.33 0 4.89-.48 7.24-1.48.35-.15.65.23.29.48z" />
-            <path
-              d="M16.8 16.05c-.27-.34-1.77-.16-2.45-.08-.2.02-.24-.15-.05-.29 1.2-.84 3.16-.6 3.39-.32.23.29-.06 2.28-1.18 3.23-.17.15-.34.07-.26-.12.26-.63.83-2.08.55-2.42z" />
-            <path
-              d="M14.5 7.5c0-.8.02-1.47-.4-2.01-.35-.46-.93-.68-1.62-.68-1.14 0-2.15.6-2.4 2.02-.05.27-.25.27-.42.24l-1.68-.18c-.14-.03-.3-.14-.26-.35.4-2.1 2.28-3.44 4.87-3.44 1.3 0 3 .35 4.02 1.35 1.02 1 1.1 2.35 1.1 3.6v4.63c0 .93.38 1.34.74 1.83.13.18.16.4-.01.54-.4.33-1.1.94-1.49 1.28-.19.16-.4.17-.55.05-.77-.67-.9-.98-1.33-1.62-1.27 1.3-2.17 1.69-3.82 1.69-1.94 0-3.46-1.2-3.46-3.6 0-1.87.99-3.14 2.4-3.76 1.22-.55 2.94-.65 4.25-.8v-.42zm-1.63 4.9c.32-.55.32-1.07.32-1.68v-.9c-1.65 0-3.39.35-3.39 2.29 0 .99.51 1.65 1.39 1.65.64 0 1.21-.4 1.68-1.36z" />
-          </svg>
-          Comprar na Amazon
-        </a>
 
         <div class="pages-strip" id="pagesStrip" role="list" aria-label="Trechos do livro">
           <article class="page-card" role="listitem" tabindex="0">
@@ -280,10 +288,13 @@
     </div>
   </section>
 
-  <!-- QUOTE 5 - center -->
+  <!-- QUOTE 5 - paired with the book-in-hand photo -->
   <section class="quote-section">
-    <div class="container">
-      <blockquote class="quote-block quote-center reveal from-center">
+    <div class="container quote-photo-grid quote-photo-grid--reverse">
+      <div class="quote-photo-frame reveal from-left">
+        <img src="assets/livro-mao.jpg" alt="Livro Necropolítica e Reflexões nas mãos do leitor">
+      </div>
+      <blockquote class="quote-block quote-left reveal from-right">
         [...] fazer com que ações letais sejam apresentadas como necessárias à preservação da ordem, enquanto
         determinadas mortes são naturalizadas ou reduzidas a consequências inevitáveis da segurança pública.
       </blockquote>
@@ -329,7 +340,7 @@
         <a href="#depoimentos">Depoimentos</a>
         <a href="https://www.instagram.com/taialmeida2/" target="_blank">Instagram</a>
       </div>
-      <p class="foot-legal">Site desenvolvido por Murilo</p>
+      <p class="foot-legal">Protótipo de site desenvolvido por Murilo · Feira de Santana, BA</p>
     </div>
   </footer>
 
