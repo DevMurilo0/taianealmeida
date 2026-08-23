@@ -31,19 +31,28 @@
   <div class="nav-overlay" id="navOverlay"></div>
 
   <!-- HERO -->
-  <section class="hero">
-    <div class="hero-bg" style="background-image:url('assets/hero-bg.jpg')"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <div class="eyebrow">Lançamento do livro</div>
-      <h1 class="fold-title" id="foldTitle">
-        <span class="line2">NECROPOLÍTICA</span><br>
-        <span class="line1">E REFLEXÕES</span>
-      </h1>
-      <h1 class="hero-sub">ACERCA DA POPULAÇÃO NEGRA NO TERRITORIO BAIANO</h1>
-      <p class="hero-tagline">Juventude, Segurança pública e Corpos silenciados</p>
+  <!-- HERO — scroll-expand effect (frame expands to full-bleed as you scroll) -->
+  <section class="hero-se">
+    <div class="hero-se-track" id="heroSeTrack">
+      <div class="hero-se-stage">
+        <div class="hero-se-frame" id="heroSeFrame">
+          <div class="hero-bg" id="heroBg" style="background-image:url('assets/hero-bg.jpg')"></div>
+          <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content" id="heroContent">
+          <div class="eyebrow">Lançamento do livro</div>
+          <h1 class="fold-title" id="foldTitle">
+            <span class="line2">NECROPOLÍTICA</span><br>
+            <span class="line1">E REFLEXÕES</span>
+          </h1>
+          <h1 class="hero-sub">ACERCA DA POPULAÇÃO NEGRA NO TERRITORIO BAIANO</h1>
+          <p class="hero-tagline">Juventude, Segurança pública e Corpos silenciados</p>
+        </div>
+        <div class="hero-se-hint" id="heroSeHint">role para baixo</div>
+      </div>
     </div>
   </section>
+
 
   <!-- QUOTE 1 - left, paired with a photo of the author -->
 
@@ -82,8 +91,7 @@
 
 
   <!-- QUOTE 2 - center on dark -->
-  <section class="quote-section dark cursor-grid-bg">
-    <canvas class="cursor-grid-canvas" aria-hidden="true"></canvas>
+  <section class="quote-section dark goal-bg">
     <div class="container">
       <blockquote class="quote-block quote-center reveal from-center">
         Ao final, permanece uma questão simples e perturbadora: por que algumas mortes provocam comoção, enquanto outras
