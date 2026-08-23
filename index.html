@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Necropolítica e Reflexões | Taiane Almeida Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,800;0,900;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <canvas id="sparkCanvas"></canvas>
+
+  <nav id="mainNav">
+    <div class="nav-name">Taiane Almeida Santos</div>
+    <div class="nav-links">
+      <a href="#livro">O Livro</a>
+      <a href="#autora">Autora</a>
+      <a href="#depoimentos">Depoimentos</a>
+      <a href="#contato">Contato</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" style="background-image:url('assets/hero-bg.jpg')"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="eyebrow">Lançamento do livro</div>
+      <h1 class="fold-title" id="foldTitle">
+        <span class="line1">NECROPOLÍTICA</span><br>
+        <span class="line2">E REFLEXÕES</span>
+      </h1>
+      <p class="hero-sub">Sobre a população negra no território baiano</p>
+      <p class="hero-tagline">Juventude, Segurança pública e Corpos silenciados</p>
+
+      <div class="countdown-wrap" id="countdown">
+        <div class="cd-box">
+          <div class="cd-num" id="cd-days">--</div>
+          <div class="cd-label">dias</div>
+        </div>
+        <div class="cd-box">
+          <div class="cd-num" id="cd-hours">--</div>
+          <div class="cd-label">horas</div>
+        </div>
+      </div>
+      <p class="cd-caption">Faltam para o lançamento, no dia 11 de setembro</p>
+    </div>
+    <div class="scroll-cue"><span>role</span><span class="line"></span></div>
+  </section>
+
+  <!-- QUOTE 1 - left -->
+  <section class="quote-section">
+    <div class="container">
+      <blockquote class="quote-block quote-left reveal from-left">
+        Reconhecer os mecanismos que naturalizam determinadas mortes significa também reafirmar o direito à vida, à
+        memória, à justiça e à dignidade humana.
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- SINOPSE -->
+  <section class="sinopse" id="sinopse">
+    <div class="container sinopse-grid">
+      <div class="sinopse-text reveal from-left">
+        <span class="sinopse-badge">Sinopse (versão provisória)</span>
+        <h2 class="section-title">Uma obra sobre mídia, poder e o direito à vida</h2>
+        <p>A partir da Chacina do Cabula, ocorrida em 2015 em Salvador, este livro investiga como a imprensa baiana
+          narrou o episódio e as disputas de sentido que envolveram versões policiais, denúncias do Ministério Público e
+          as vozes silenciadas das vítimas e de suas famílias.</p>
+        <p>Em diálogo com o conceito de necropolítica, a obra convida o leitor a refletir sobre a distribuição desigual
+          da proteção à vida e da exposição à morte, e sobre como certos corpos e territórios são historicamente
+          marcados pela violência do Estado.</p>
+        <p><em>Este texto é um rascunho para o protótipo; pode ser substituído a qualquer momento pela sinopse
+            definitiva.</em></p>
+      </div>
+      <div class="reveal from-right">
+        <img src="assets/capa-livro.jpg" alt="Capa do livro Necropolítica e Reflexões"
+          style="box-shadow:0 30px 70px rgba(0,0,0,.25); border-radius:2px;">
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE 2 - center on dark -->
+  <section class="quote-section dark cursor-grid-bg">
+    <canvas class="cursor-grid-canvas" aria-hidden="true"></canvas>
+    <div class="container">
+      <blockquote class="quote-block quote-center reveal from-center">
+        Ao final, permanece uma questão simples e perturbadora: por que algumas mortes provocam comoção, enquanto outras
+        são rapidamente transformadas em mais um número?
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- LIVRO -->
+  <section class="livro cursor-grid-bg" id="livro">
+    <canvas class="cursor-grid-canvas" aria-hidden="true"></canvas>
+    <div class="container livro-grid">
+      <div class="book-cover-wrap reveal from-left">
+        <img src="assets/capa-livro.jpg" alt="Capa do livro">
+      </div>
+      <div class="reveal from-right">
+        <span class="section-label">O Livro</span>
+        <h2 class="livro-title">NECROPOLÍTICA <span class="red">E REFLEXÕES</span> ACERCA DA POPULAÇÃO NEGRA NO
+          TERRITÓRIO BAIANO</h2>
+        <p class="livro-subtitle">Juventude, segurança pública e corpos silenciados</p>
+        <div class="livro-meta">
+          <span class="meta-pill">Autopublicação</span>
+          <span class="meta-pill">Apoio: Política Nacional Aldir Blanc</span>
+          <span class="meta-pill">Feira de Santana, BA</span>
+        </div>
+        <a href="#" class="amazon-btn" id="amazonBtn">
+          <svg class="amazon-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M15.93 17.09c-2.1 1.55-5.14 2.38-7.76 2.38-3.67 0-6.98-1.36-9.48-3.62-.2-.18-.02-.42.22-.28 2.7 1.57 6.04 2.52 9.49 2.52 2.33 0 4.89-.48 7.24-1.48.35-.15.65.23.29.48z" />
+            <path
+              d="M16.8 16.05c-.27-.34-1.77-.16-2.45-.08-.2.02-.24-.15-.05-.29 1.2-.84 3.16-.6 3.39-.32.23.29-.06 2.28-1.18 3.23-.17.15-.34.07-.26-.12.26-.63.83-2.08.55-2.42z" />
+            <path
+              d="M14.5 7.5c0-.8.02-1.47-.4-2.01-.35-.46-.93-.68-1.62-.68-1.14 0-2.15.6-2.4 2.02-.05.27-.25.27-.42.24l-1.68-.18c-.14-.03-.3-.14-.26-.35.4-2.1 2.28-3.44 4.87-3.44 1.3 0 3 .35 4.02 1.35 1.02 1 1.1 2.35 1.1 3.6v4.63c0 .93.38 1.34.74 1.83.13.18.16.4-.01.54-.4.33-1.1.94-1.49 1.28-.19.16-.4.17-.55.05-.77-.67-.9-.98-1.33-1.62-1.27 1.3-2.17 1.69-3.82 1.69-1.94 0-3.46-1.2-3.46-3.6 0-1.87.99-3.14 2.4-3.76 1.22-.55 2.94-.65 4.25-.8v-.42zm-1.63 4.9c.32-.55.32-1.07.32-1.68v-.9c-1.65 0-3.39.35-3.39 2.29 0 .99.51 1.65 1.39 1.65.64 0 1.21-.4 1.68-1.36z" />
+          </svg>
+          Comprar na Amazon
+        </a>
+
+        <div class="pages-strip" id="pagesStrip" role="list" aria-label="Trechos do livro">
+          <article class="page-card" role="listitem" tabindex="0">
+            <span class="page-card__glow" aria-hidden="true"></span>
+            <span class="page-card__num" aria-hidden="true">19</span>
+            <div class="page-card__body">
+              <span class="page-card__bar"></span>
+              <p class="page-card__quote">"É com profundo compromisso ético e intelectual que apresento este livro ao
+                público..."</p>
+              <div class="page-card__pnum">Apresentação, p. 19</div>
+            </div>
+          </article>
+          <article class="page-card" role="listitem" tabindex="0">
+            <span class="page-card__glow" aria-hidden="true"></span>
+            <span class="page-card__num" aria-hidden="true">20</span>
+            <div class="page-card__body">
+              <span class="page-card__bar"></span>
+              <p class="page-card__quote">"A investigação toma como referência a Chacina do Cabula, ocorrida em
+                fevereiro de 2015, em Salvador..."</p>
+              <div class="page-card__pnum">Apresentação, p. 20</div>
+            </div>
+          </article>
+          <article class="page-card" role="listitem" tabindex="0">
+            <span class="page-card__glow" aria-hidden="true"></span>
+            <span class="page-card__num" aria-hidden="true">21</span>
+            <div class="page-card__body">
+              <span class="page-card__bar"></span>
+              <p class="page-card__quote">"Este livro convida o leitor a refletir sobre a distribuição desigual da
+                proteção à vida e da exposição à morte."</p>
+              <div class="page-card__pnum">Apresentação, p. 21</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE 3 - right -->
+  <section class="quote-section">
+    <div class="container">
+      <blockquote class="quote-block quote-right reveal from-right">
+        A violência não se distribui ao acaso, ela se inscreve em corpos e territórios historicamente marcados pelas
+        desigualdades.
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- AUTORA -->
+  <section class="autora" id="autora">
+    <div class="container autora-grid">
+      <div class="autora-photo reveal from-left">
+        <img src="assets/autora.jpg" alt="Taiane Almeida Santos">
+      </div>
+      <div class="reveal from-right">
+        <span class="section-label">A Autora</span>
+        <p class="autora-kicker">Escritora, produtora e cientista social</p>
+        <h2 class="autora-name">Taiane Almeida Santos</h2>
+        <div class="autora-bio">
+          <p>Cientista social, mestra em Ciências Sociais pela Universidade Federal do Recôncavo da Bahia (UFRB),
+            professora de Sociologia, pesquisadora e produtora cultural. Sua trajetória é marcada pelo estudo das
+            relações entre mídia, segurança pública, violência de Estado, desigualdades raciais e territórios negros.
+          </p>
+        </div>
+        <ul class="formacao-list">
+          <li>Mestra em Ciências Sociais (UFRB)</li>
+          <li>Pós-graduanda em Cultura Afro-Brasileira e Povos Indígenas (IFBAIANO)</li>
+          <li>Bacharel em Ciências Sociais (UFRB)</li>
+        </ul>
+        <div class="contatos">
+          <a class="contato-chip" href="https://wa.me/5575992184028" target="_blank">WhatsApp</a>
+          <a class="contato-chip" href="mailto:almeida.taiane@outllook.com">E-mail</a>
+          <a class="contato-chip" href="https://www.instagram.com/taialmeida2/" target="_blank">Instagram</a>
+          <a class="contato-chip" href="https://share.google/I5t78HGhTyZpw0pw1" target="_blank">Lattes</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE 4 - left on dark -->
+  <section class="quote-section dark cursor-grid-bg">
+    <canvas class="cursor-grid-canvas" aria-hidden="true"></canvas>
+    <div class="container">
+      <blockquote class="quote-block quote-left reveal from-left">
+        Quais mortes produzem indignação pública e quais violências seguem sendo narradas como parte natural da ordem
+        social?
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section class="depoimentos" id="depoimentos">
+    <div class="container">
+      <span class="section-label">Depoimentos</span>
+      <h2 class="section-title" style="color:var(--cream)">O que dizem sobre a obra</h2>
+    </div>
+    <div class="container" style="margin-top:50px;">
+      <div class="dep-track">
+        <div class="dep-card reveal from-bottom">
+          <p class="dep-quote">"Um trabalho rigoroso que conecta teoria social e realidade concreta das periferias
+            baianas com muita sensibilidade."</p>
+          <div class="dep-name">Nome do(a) pesquisador(a)</div>
+          <div class="dep-role">Instituição a confirmar</div>
+        </div>
+        <div class="dep-card reveal from-bottom">
+          <p class="dep-quote">"Taiane consegue transformar uma dissertação acadêmica densa em uma leitura urgente e
+            acessível a todos os públicos."</p>
+          <div class="dep-name">Nome do(a) professor(a)</div>
+          <div class="dep-role">Instituição a confirmar</div>
+        </div>
+        <div class="dep-card reveal from-bottom">
+          <p class="dep-quote">"Uma contribuição essencial para pensar racismo, mídia e segurança pública no Brasil
+            contemporâneo."</p>
+          <div class="dep-name">Nome do(a) colega</div>
+          <div class="dep-role">Instituição a confirmar</div>
+        </div>
+      </div>
+      <p class="dep-note">* Depoimentos simulados para este protótipo; serão substituídos pelas falas reais assim que
+        você me enviar.</p>
+    </div>
+  </section>
+
+  <!-- TRABALHOS -->
+  <section class="trabalhos" id="trabalhos">
+    <div class="container">
+      <span class="section-label">Além do livro</span>
+      <h2 class="section-title">Pesquisa e produção cultural</h2>
+      <div class="trab-grid">
+        <div class="trab-card reveal from-bottom">
+          <svg class="trab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h16v16H4z" />
+            <path d="M8 8h8M8 12h8M8 16h5" />
+          </svg>
+          <h3>Dissertação de mestrado</h3>
+          <p>Mídia, Segurança Pública e a Chacina do Cabula (PPG em Ciências Sociais: Cultura, Desigualdades e
+            Desenvolvimento, UFRB).</p>
+        </div>
+        <div class="trab-card reveal from-bottom">
+          <svg class="trab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 3" />
+          </svg>
+          <h3>Artigos publicados</h3>
+          <p>Espaço reservado para os artigos e publicações da autora; conteúdo a ser enviado.</p>
+        </div>
+        <div class="trab-card reveal from-bottom">
+          <svg class="trab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 12l9-9 9 9M5 10v10h14V10" />
+          </svg>
+          <h3>Projetos de cultura</h3>
+          <p>Ações de produção cultural e valorização da memória em comunidades; descrição a definir com a autora.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE 5 - center -->
+  <section class="quote-section">
+    <div class="container">
+      <blockquote class="quote-block quote-center reveal from-center">
+        [...] fazer com que ações letais sejam apresentadas como necessárias à preservação da ordem, enquanto
+        determinadas mortes são naturalizadas ou reduzidas a consequências inevitáveis da segurança pública.
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter" id="contato">
+    <div class="container">
+      <h2>Seja avisado(a) do lançamento</h2>
+      <p>Deixe seu e-mail e receba novidades sobre o livro, a agenda de eventos e o material extra.</p>
+      <form class="nl-form" id="nlForm">
+        <input type="email" placeholder="seu@email.com" required>
+        <button type="submit">Quero saber</button>
+      </form>
+      <p class="nl-msg" id="nlMsg"></p>
+    </div>
+  </section>
+
+  <!-- APOIO / LOGO LOOP -->
+  <div class="apoio">
+    <p class="apoio-label">Apoio institucional</p>
+    <div class="logoloop">
+      <div class="logoloop-track" id="logoTrack">
+        <img src="assets/logo-feira.png" alt="Feira de Santana">
+        <img src="assets/logo-snc.png" alt="Sistema Nacional de Cultura">
+        <img src="assets/logo-aldir.png" alt="Política Nacional Aldir Blanc">
+        <img src="assets/logo-minc.png" alt="Ministério da Cultura">
+        <img src="assets/logo-feira.png" alt="Feira de Santana">
+        <img src="assets/logo-snc.png" alt="Sistema Nacional de Cultura">
+        <img src="assets/logo-aldir.png" alt="Política Nacional Aldir Blanc">
+        <img src="assets/logo-minc.png" alt="Ministério da Cultura">
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="foot-name">Taiane Almeida Santos</div>
+      <div class="foot-links">
+        <a href="#livro">O Livro</a>
+        <a href="#autora">Autora</a>
+        <a href="#depoimentos">Depoimentos</a>
+        <a href="https://www.instagram.com/taialmeida2/" target="_blank">Instagram</a>
+      </div>
+      <p class="foot-legal">Site desenvolvido por Murilo</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
