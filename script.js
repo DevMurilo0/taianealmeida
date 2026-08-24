@@ -4,85 +4,6 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 });
 
-// HERO SCROLL-EXPAND — frame grows from a small rounded box to full-bleed as you scroll,
-// based on the React Bits ScrollExpand component, adapted to vanilla JS.
-(function () {
-  const track = document.getElementById('heroSeTrack');
-  const frame = document.getElementById('heroSeFrame');
-  const bg = document.getElementById('heroBg');
-  const content = document.getElementById('heroContent');
-  const hint = document.getElementById('heroSeHint');
-  if (!track || !frame || !bg) return;
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const startInsetX = 30; // % — horizontal margin at rest (left/right)
-  const startInsetY = 22; // % — vertical margin at rest (top/bottom) — smaller = closer to the nav
-  const startRadius = 28; // px
-  const endRadius = 0;
-  const mediaZoom = 1.35;
-  const scrollDistance = 1.1; // in multiples of viewport height
-  const holdDistance = 0.25;
-
-  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-  const smoothstep = (e0, e1, x) => {
-    const t = clamp((x - e0) / (e1 - e0 || 1e-6), 0, 1);
-    return t * t * (3 - 2 * t);
-  };
-
-  let stageH = 0;
-
-  function measure() {
-    stageH = window.innerHeight;
-    track.style.height = `${stageH * (1 + scrollDistance + holdDistance)}px`;
-  }
-
-  function applyProgress(p) {
-    const e = smoothstep(0, 1, p);
-
-    // frame grows from its resting inset down to 0% (full-bleed)
-    const insetX = (startInsetX / 2) * (1 - e);
-    const insetY = (startInsetY / 2) * (1 - e);
-    const radius = startRadius + (endRadius - startRadius) * e;
-    frame.style.clipPath = `inset(${insetY}% ${insetX}% ${insetY}% ${insetX}% round ${radius}px)`;
-
-    bg.style.transform = `scale(${mediaZoom + (1 - mediaZoom) * e})`;
-
-    if (hint) {
-      const gone = smoothstep(0, 0.12, p);
-      hint.style.opacity = `${1 - gone}`;
-      hint.style.transform = `translate3d(0, ${8 * gone}px, 0)`;
-    }
-  }
-
-  function readProgress() {
-    const span = stageH * scrollDistance;
-    const top = track.getBoundingClientRect().top;
-    return clamp(-top / span, 0, 1);
-  }
-
-  let ticking = false;
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      applyProgress(readProgress());
-      ticking = false;
-    });
-  }
-
-  measure();
-  applyProgress(readProgress());
-
-  if (!reduceMotion) {
-    window.addEventListener('scroll', onScroll, { passive: true });
-  }
-  window.addEventListener('resize', () => {
-    measure();
-    applyProgress(readProgress());
-  });
-})();
-
 // MOBILE NAV — hamburger toggle
 (function () {
   const toggle = document.getElementById('navToggle');
@@ -114,7 +35,7 @@ window.addEventListener('scroll', () => {
     [...text].forEach((ch, i) => {
       const span = document.createElement('span');
       span.className = 'fold-char';
-      span.style.animationDelay = (i * 0.035) + 's';
+      span.style.animationDelay = (i * 0.07) + 's';
       span.textContent = ch === ' ' ? '\u00A0' : ch;
       line.appendChild(span);
     });
