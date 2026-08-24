@@ -16,11 +16,11 @@ window.addEventListener('scroll', () => {
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const startSize = 30;   // % — how small the frame starts (width/height inset from each side... see below)
+  const startInsetX = 30; // % — horizontal margin at rest (left/right)
+  const startInsetY = 22; // % — vertical margin at rest (top/bottom) — smaller = closer to the nav
   const startRadius = 28; // px
   const endRadius = 0;
   const mediaZoom = 1.35;
-  const startHold = 0.15;    // fraction of scrollDistance to wait before the animation begins
   const scrollDistance = 1.1; // in multiples of viewport height
   const holdDistance = 0.25;
 
@@ -38,18 +38,18 @@ window.addEventListener('scroll', () => {
   }
 
   function applyProgress(p) {
-    // hold flat for the first bit of scroll, then ease into the animation
-    const e = smoothstep(startHold, 1, p);
+    const e = smoothstep(0, 1, p);
 
-    // frame grows from startSize% inset on each side down to 0% (full-bleed)
-    const inset = (startSize / 2) * (1 - e);
+    // frame grows from its resting inset down to 0% (full-bleed)
+    const insetX = (startInsetX / 2) * (1 - e);
+    const insetY = (startInsetY / 2) * (1 - e);
     const radius = startRadius + (endRadius - startRadius) * e;
-    frame.style.clipPath = `inset(${inset}% ${inset}% ${inset}% ${inset}% round ${radius}px)`;
+    frame.style.clipPath = `inset(${insetY}% ${insetX}% ${insetY}% ${insetX}% round ${radius}px)`;
 
     bg.style.transform = `scale(${mediaZoom + (1 - mediaZoom) * e})`;
 
     if (hint) {
-      const gone = smoothstep(startHold, startHold + 0.1, p);
+      const gone = smoothstep(0, 0.12, p);
       hint.style.opacity = `${1 - gone}`;
       hint.style.transform = `translate3d(0, ${8 * gone}px, 0)`;
     }
@@ -129,11 +129,12 @@ const revealEls = document.querySelectorAll('.reveal');
 const io = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('in-view');
-      io.unobserve(entry.target);
+      const el = entry.target;
+      io.unobserve(el);
+      setTimeout(() => el.classList.add('in-view'), 250);
     }
   });
-}, { threshold: 0.18 });
+}, { threshold: 0.35 });
 revealEls.forEach(el => io.observe(el));
 
 // COUNTDOWN: lançamento em 11/09
@@ -182,39 +183,60 @@ setInterval(updateCountdown, 60000);
   requestAnimationFrame(draw);
 })();
 
-// PAGE CARDS: hover accordion with mouse-tracking spotlight
+// BOOK FLIP — checkbox-driven 3D page turn (pure CSS flip, JS just drives the checkboxes)
 (function () {
-  const cards = document.querySelectorAll('#pagesStrip .page-card');
-  if (!cards.length) return;
+  const root = document.getElementById('bookFlip');
+  if (!root) return;
 
-  // starts with the middle card open so it never looks "dead"
-  cards[Math.floor(cards.length / 2)].classList.add('active');
+  const checkboxes = Array.from(root.querySelectorAll('.book__checkbox'));
+  const prevBtn = document.getElementById('flipPrev');
+  const nextBtn = document.getElementById('flipNext');
+  const indicator = document.getElementById('flipIndicator');
+  const pageNumbers = [23, 24, 25, 26, 27]; // page-23..page-27, in order
+  let current = 0; // index of the page currently on top (unflipped)
 
-  cards.forEach(card => {
-    const glow = card.querySelector('.page-card__glow');
+  function render() {
+    indicator.textContent = `Pág. ${pageNumbers[current]}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === pageNumbers.length - 1;
+  }
 
-    card.addEventListener('mousemove', (e) => {
-      const r = card.getBoundingClientRect();
-      glow.style.setProperty('--mx', ((e.clientX - r.left) / r.width) * 100 + '%');
-      glow.style.setProperty('--my', ((e.clientY - r.top) / r.height) * 100 + '%');
-    });
+  function next() {
+    if (current >= checkboxes.length) return;
+    checkboxes[current].checked = true;
+    current++;
+    render();
+  }
+  function prev() {
+    if (current <= 0) return;
+    current--;
+    checkboxes[current].checked = false;
+    render();
+  }
 
-    card.addEventListener('mouseenter', () => {
-      cards.forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-    });
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
 
-    card.addEventListener('focus', () => {
-      cards.forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-    });
-
-    // tap support on touch devices, since there's no hover there
-    card.addEventListener('click', () => {
-      cards.forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
+  // clicking a checkbox's own label already flips it forward (native behavior);
+  // just keep our counter/indicator in sync when that happens directly.
+  checkboxes.forEach((cb, i) => {
+    cb.addEventListener('change', () => {
+      current = cb.checked ? i + 1 : i;
+      render();
     });
   });
+
+  // swipe support on touch devices
+  let touchStartX = null;
+  root.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+    touchStartX = null;
+  }, { passive: true });
+
+  render();
 })();
 
 // NEWSLETTER (demo, sem backend)

@@ -142,42 +142,64 @@
           <span class="meta-pill">Feira de Santana, BA</span>
         </div>
 
-        <div class="pages-strip" id="pagesStrip" role="list" aria-label="Trechos do livro">
-          <article class="page-card" role="listitem" tabindex="0">
-            <span class="page-card__glow" aria-hidden="true"></span>
-            <span class="page-card__num" aria-hidden="true">19</span>
-            <div class="page-card__body">
-              <span class="page-card__bar"></span>
-              <p class="page-card__quote">"É com profundo compromisso ético e intelectual que apresento este livro ao
-                público..."</p>
-              <div class="page-card__pnum">Apresentação, p. 19</div>
+        <div class="book-flip" id="bookFlip" aria-label="Prévia de páginas do livro">
+          <div class="book-flip__frame">
+            <div class="book" id="flipBook">
+              <input type="checkbox" class="book__checkbox" id="flip-23">
+              <label for="flip-23" class="book__page" style="z-index:5">
+                <img src="assets/book-pages/page-23.jpg" alt="Página 23 do livro" draggable="false">
+              </label>
+
+              <input type="checkbox" class="book__checkbox" id="flip-24">
+              <label for="flip-24" class="book__page" style="z-index:4">
+                <img src="assets/book-pages/page-24.jpg" alt="Página 24 do livro" draggable="false">
+              </label>
+
+              <input type="checkbox" class="book__checkbox" id="flip-25">
+              <label for="flip-25" class="book__page" style="z-index:3">
+                <img src="assets/book-pages/page-25.jpg" alt="Página 25 do livro" draggable="false">
+              </label>
+
+              <input type="checkbox" class="book__checkbox" id="flip-26">
+              <label for="flip-26" class="book__page" style="z-index:2">
+                <img src="assets/book-pages/page-26.jpg" alt="Página 26 do livro" draggable="false">
+              </label>
+
+              <label class="book__page" style="z-index:1">
+                <img src="assets/book-pages/page-27.jpg" alt="Página 27 do livro" draggable="false">
+              </label>
             </div>
-          </article>
-          <article class="page-card" role="listitem" tabindex="0">
-            <span class="page-card__glow" aria-hidden="true"></span>
-            <span class="page-card__num" aria-hidden="true">20</span>
-            <div class="page-card__body">
-              <span class="page-card__bar"></span>
-              <p class="page-card__quote">"A investigação toma como referência a Chacina do Cabula, ocorrida em
-                fevereiro de 2015, em Salvador..."</p>
-              <div class="page-card__pnum">Apresentação, p. 20</div>
-            </div>
-          </article>
-          <article class="page-card" role="listitem" tabindex="0">
-            <span class="page-card__glow" aria-hidden="true"></span>
-            <span class="page-card__num" aria-hidden="true">21</span>
-            <div class="page-card__body">
-              <span class="page-card__bar"></span>
-              <p class="page-card__quote">"Este livro convida o leitor a refletir sobre a distribuição desigual da
-                proteção à vida e da exposição à morte."</p>
-              <div class="page-card__pnum">Apresentação, p. 21</div>
-            </div>
-          </article>
+            <div class="book-flip__spine" aria-hidden="true"></div>
+          </div>
+          <div class="book-flip__controls">
+            <button type="button" class="flip-btn" id="flipPrev" aria-label="Página anterior">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <span class="flip-indicator" id="flipIndicator">Pág. 23</span>
+            <button type="button" class="flip-btn" id="flipNext" aria-label="Próxima página">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- QUOTE 3 - right -->
+  <section class="quote-section">
+    <div class="container">
+      <blockquote class="quote-block quote-right reveal from-right">
+        A violência não se distribui ao acaso, ela se inscreve em corpos e territórios historicamente marcados pelas
+        desigualdades.
+      </blockquote>
+    </div>
+  </section>
 
   <!-- AUTORA -->
   <section class="autora" id="autora">
@@ -209,18 +231,6 @@
       </div>
     </div>
   </section>
-
-  <!-- QUOTE 3 - right -->
-  <section class="quote-section">
-    <div class="container">
-      <blockquote class="quote-block quote-right reveal from-right">
-        A violência não se distribui ao acaso, ela se inscreve em corpos e territórios historicamente marcados pelas
-        desigualdades.
-      </blockquote>
-    </div>
-  </section>
-
-
 
   <!-- QUOTE 4 - left on dark -->
   <section class="quote-section dark cursor-grid-bg">
