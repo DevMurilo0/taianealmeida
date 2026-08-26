@@ -4,6 +4,68 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 });
 
+// ORBIT IMAGES — mockups do livro girando em órbita elíptica ao redor da foto da autora
+(function () {
+  const orbit = document.querySelector('.orbit');
+  if (!orbit) return;
+
+  const items = Array.from(orbit.querySelectorAll('.orbit-item')).map(el => ({
+    el,
+    angle: (parseFloat(el.dataset.angle) || 0) * (Math.PI / 180)
+  }));
+  if (!items.length) return;
+
+  const DURATION = 16000; // ms por volta completa
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let rx = 0, ry = 0;
+  function measure() {
+    const w = orbit.clientWidth;
+    const h = orbit.clientHeight;
+    const itemHalf = (items[0].el.offsetWidth || 80) / 2;
+    rx = Math.max(w / 2 - itemHalf, 10);
+    ry = Math.max(h / 2 - itemHalf, 10);
+  }
+
+  function place(angle) {
+    return {
+      x: Math.cos(angle) * rx,
+      y: Math.sin(angle) * ry,
+      depth: (Math.sin(angle) + 1) / 2 // 0 = fundo, 1 = frente
+    };
+  }
+
+  function render(angleOffset) {
+    items.forEach(item => {
+      const { x, y, depth } = place(item.angle + angleOffset);
+      const scale = 0.72 + depth * 0.3;
+      const opacity = 0.6 + depth * 0.4;
+      item.el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`;
+      item.el.style.opacity = opacity;
+      item.el.style.zIndex = Math.round(depth * 100);
+    });
+  }
+
+  measure();
+
+  if (prefersReduced) {
+    render(0);
+  } else {
+    let raf;
+    const start = performance.now();
+    function tick(now) {
+      const elapsed = (now - start) % DURATION;
+      const angleOffset = (elapsed / DURATION) * Math.PI * 2;
+      render(angleOffset);
+      raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  const ro = new ResizeObserver(measure);
+  ro.observe(orbit);
+})();
+
 // MOBILE NAV — hamburger toggle
 (function () {
   const toggle = document.getElementById('navToggle');
@@ -26,16 +88,18 @@ window.addEventListener('scroll', () => {
   window.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
 })();
 
-// FOLD TITLE: split into chars and animate on load
+// FOLD TITLE: split into chars and animate on load with 3D perspective fold
 (function () {
   const el = document.getElementById('foldTitle');
-  el.querySelectorAll('.line1, .line2').forEach(line => {
+  if (!el) return;
+  el.querySelectorAll('.line1, .line2').forEach((line, lineIndex) => {
     const text = line.textContent;
     line.textContent = '';
+    const baseDelay = lineIndex * text.length * 0.045; // offset between lines
     [...text].forEach((ch, i) => {
       const span = document.createElement('span');
       span.className = 'fold-char';
-      span.style.animationDelay = (i * 0.07) + 's';
+      span.style.animationDelay = (baseDelay + i * 0.045) + 's';
       span.textContent = ch === ' ' ? '\u00A0' : ch;
       line.appendChild(span);
     });
@@ -43,6 +107,109 @@ window.addEventListener('scroll', () => {
   requestAnimationFrame(() => {
     document.querySelectorAll('.fold-char').forEach(c => c.classList.add('play'));
   });
+})();
+
+// SPLIT TEXT: split section titles into individual chars, animate on scroll
+// Uses word-level grouping so line breaks only happen between words, never mid-word.
+(function () {
+  const splitEls = document.querySelectorAll('.split-text');
+  if (!splitEls.length) return;
+
+  // Helper: split a text string into words, create a word wrapper for each,
+  // and put individual char spans inside each word wrapper.
+  function splitTextIntoWords(text, startIndex, parentFrag) {
+    let charIndex = startIndex;
+    // Normalize whitespace: collapse multiple spaces/newlines into single space, trim
+    const cleaned = text.replace(/\s+/g, ' ');
+    const words = cleaned.split(' ');
+    words.forEach((word, wi) => {
+      if (word.length === 0) return;
+      // Word wrapper — inline-block + nowrap prevents mid-word breaks
+      const wordSpan = document.createElement('span');
+      wordSpan.className = 'split-word';
+      [...word].forEach(ch => {
+        const charSpan = document.createElement('span');
+        charSpan.className = 'split-char';
+        charSpan.style.transitionDelay = (charIndex * 0.025) + 's';
+        charSpan.textContent = ch;
+        wordSpan.appendChild(charSpan);
+        charIndex++;
+      });
+      parentFrag.appendChild(wordSpan);
+      // Add a normal space between words (not after the last word)
+      if (wi < words.length - 1) {
+        parentFrag.appendChild(document.createTextNode(' '));
+      }
+    });
+    return charIndex;
+  }
+
+  splitEls.forEach(el => {
+    const preserveHtml = el.dataset.splitPreserveHtml === 'true';
+    if (preserveHtml) {
+      const frag = document.createDocumentFragment();
+      let charIndex = 0;
+      Array.from(el.childNodes).forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          charIndex = splitTextIntoWords(node.textContent, charIndex, frag);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const wrapper = node.cloneNode(false);
+          wrapper.style.display = 'inline'; // keep color spans inline
+          charIndex = splitTextIntoWords(node.textContent, charIndex, wrapper);
+          frag.appendChild(wrapper);
+        }
+      });
+      el.innerHTML = '';
+      el.appendChild(frag);
+    } else {
+      const text = el.textContent;
+      el.textContent = '';
+      const frag = document.createDocumentFragment();
+      splitTextIntoWords(text, 0, frag);
+      el.appendChild(frag);
+    }
+  });
+
+  // Observe each split-text element
+  const splitObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('split-animated');
+        splitObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '-80px' });
+
+  splitEls.forEach(el => splitObs.observe(el));
+})();
+
+// ROTATING TEXT: cycle through words with spring-like vertical transition
+(function () {
+  const container = document.getElementById('rotatingText');
+  if (!container) return;
+  const items = Array.from(container.querySelectorAll('.rotating-text__item'));
+  if (items.length < 2) return;
+
+  let current = 0;
+  const INTERVAL = 2500; // ms between rotations
+
+  function rotate() {
+    const prev = items[current];
+    prev.classList.remove('is-active');
+    prev.classList.add('is-exiting');
+
+    current = (current + 1) % items.length;
+    const next = items[current];
+    next.classList.remove('is-exiting');
+    next.classList.add('is-active');
+
+    // Clean up exiting class after transition completes
+    setTimeout(() => {
+      prev.classList.remove('is-exiting');
+    }, 500);
+  }
+
+  setInterval(rotate, INTERVAL);
 })();
 
 // REVEAL ON SCROLL
@@ -57,6 +224,61 @@ const io = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.35 });
 revealEls.forEach(el => io.observe(el));
+
+// DEPOIMENTOS — clique pausa o carrossel, mover o mouse depois retoma
+const depTrack = document.querySelector('.dep-track');
+if (depTrack) {
+  let lastX = null;
+  let lastY = null;
+
+  depTrack.addEventListener('click', (e) => {
+    depTrack.classList.add('paused');
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!depTrack.classList.contains('paused')) return;
+    if (lastX === null) return;
+    const moveu = Math.abs(e.clientX - lastX) > 4 || Math.abs(e.clientY - lastY) > 4;
+    if (moveu) {
+      depTrack.classList.remove('paused');
+      lastX = null;
+      lastY = null;
+    }
+  });
+}
+
+// TIMELINE "ALÉM DO LIVRO" — escalona os itens e cresce a linha ao entrar na tela
+const pubList = document.querySelector('.pub-list');
+if (pubList) {
+  const pubItems = pubList.querySelectorAll('.pub-item');
+  const stagger = 0.35; // segundos entre o início de um trabalho e o próximo
+  pubItems.forEach((item, i) => {
+    const base = i * stagger;
+    // só o fade (3ª posição na lista de transition do .pub-item) ganha o atraso;
+    // padding-left/border-color do hover continuam instantâneos
+    item.style.transitionDelay = `0s, 0s, ${base}s`;
+
+    const dot = item.querySelector('.pub-dot');
+    if (dot) dot.style.transitionDelay = base + 's';
+
+    // dentro de cada item, tag -> título -> descrição -> link aparecem em sequência
+    const partes = item.querySelectorAll('.pub-tag, .pub-title, .pub-desc, .pub-link');
+    partes.forEach((parte, j) => {
+      parte.style.transitionDelay = (base + 0.18 + j * 0.16) + 's';
+    });
+  });
+  const pubIo = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        pubList.classList.add('in-view');
+        pubIo.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  pubIo.observe(pubList);
+}
 
 // COUNTDOWN: lançamento em 11/09
 const LAUNCH_DATE = new Date('2026-09-11T00:00:00-03:00');
@@ -104,60 +326,138 @@ setInterval(updateCountdown, 60000);
   requestAnimationFrame(draw);
 })();
 
-// BOOK FLIP — checkbox-driven 3D page turn (pure CSS flip, JS just drives the checkboxes)
+// BOOK SPREAD — páginas abertas lado a lado (fotos reais), com lightbox de zoom
 (function () {
-  const root = document.getElementById('bookFlip');
-  if (!root) return;
+  const wrap = document.getElementById('bookSpread');
+  if (!wrap) return;
 
-  const checkboxes = Array.from(root.querySelectorAll('.book__checkbox'));
-  const prevBtn = document.getElementById('flipPrev');
-  const nextBtn = document.getElementById('flipNext');
-  const indicator = document.getElementById('flipIndicator');
-  const pageNumbers = [23, 24, 25, 26, 27]; // page-23..page-27, in order
-  let current = 0; // index of the page currently on top (unflipped)
+  // spreads fotografados do miolo do livro
+  const spreads = [
+    { src: 'assets/book-pages/spread-23-24.png', label: 'Pág. 23–24', alt: 'Páginas 23–24 do livro' },
+    { src: 'assets/book-pages/spread-25-26.png', label: 'Pág. 25–26', alt: 'Páginas 25–26 do livro' }
+  ];
+  let current = 0;
 
-  function render() {
-    indicator.textContent = `Pág. ${pageNumbers[current]}`;
+  const frame = document.getElementById('spreadFrame');
+  const track = document.getElementById('spreadTrack');
+  const slideEls = Array.from(track.querySelectorAll('.spread-img'));
+  const indicator = document.getElementById('spreadIndicator');
+  const prevBtn = document.getElementById('spreadPrev');
+  const nextBtn = document.getElementById('spreadNext');
+
+  const lightbox = document.getElementById('bookLightbox');
+  const lbImg = document.getElementById('lightboxImg');
+  const lbIndicator = document.getElementById('lightboxIndicator');
+  const lbPrev = document.getElementById('lightboxPrev');
+  const lbNext = document.getElementById('lightboxNext');
+  const lbClose = document.getElementById('lightboxClose');
+
+  // desliza o track até o slide "current", mede o slide real (responsivo) em vez de usar um valor fixo
+  function slideTrack() {
+    const slide = slideEls[0];
+    if (!slide) return;
+    const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || 0);
+    const slideWidth = slide.getBoundingClientRect().width;
+    const offset = current * (slideWidth + gap);
+    track.style.transform = `translateX(-${offset}px)`;
+  }
+
+  function renderMain() {
+    const s = spreads[current];
+    slideEls.forEach((img, i) => img.classList.toggle('is-current', i === current));
+    slideTrack();
+    indicator.textContent = s.label;
     prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === pageNumbers.length - 1;
+    nextBtn.disabled = current === spreads.length - 1;
   }
 
-  function next() {
-    if (current >= checkboxes.length) return;
-    checkboxes[current].checked = true;
-    current++;
-    render();
+  function renderLightbox() {
+    const s = spreads[current];
+    lbImg.src = s.src;
+    lbImg.alt = s.alt;
+    lbIndicator.textContent = s.label;
+    lbPrev.disabled = current === 0;
+    lbNext.disabled = current === spreads.length - 1;
   }
-  function prev() {
+
+  function goNext() {
+    if (current >= spreads.length - 1) return;
+    current++;
+    unzoomImg();
+    renderMain();
+    if (lightbox.classList.contains('open')) renderLightbox();
+  }
+  function goPrev() {
     if (current <= 0) return;
     current--;
-    checkboxes[current].checked = false;
-    render();
+    unzoomImg();
+    renderMain();
+    if (lightbox.classList.contains('open')) renderLightbox();
   }
 
-  nextBtn.addEventListener('click', next);
-  prevBtn.addEventListener('click', prev);
+  function unzoomImg() {
+    lbImg.classList.remove('zoomed');
+  }
 
-  // clicking a checkbox's own label already flips it forward (native behavior);
-  // just keep our counter/indicator in sync when that happens directly.
-  checkboxes.forEach((cb, i) => {
-    cb.addEventListener('change', () => {
-      current = cb.checked ? i + 1 : i;
-      render();
-    });
+  function openLightbox() {
+    renderLightbox();
+    unzoomImg();
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    unzoomImg();
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  prevBtn.addEventListener('click', goPrev);
+  nextBtn.addEventListener('click', goNext);
+  lbPrev.addEventListener('click', goPrev);
+  lbNext.addEventListener('click', goNext);
+
+  frame.addEventListener('click', openLightbox);
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
   });
 
-  // swipe support on touch devices
+  // Zoom a partir do ponto clicado na imagem (clique novamente para voltar ao normal)
+  lbImg.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (lbImg.classList.contains('zoomed')) {
+      unzoomImg();
+      return;
+    }
+    const rect = lbImg.getBoundingClientRect();
+    const px = ((e.clientX - rect.left) / rect.width) * 100;
+    const py = ((e.clientY - rect.top) / rect.height) * 100;
+    lbImg.style.transformOrigin = `${px}% ${py}%`;
+    lbImg.classList.add('zoomed');
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') goNext();
+    if (e.key === 'ArrowLeft') goPrev();
+  });
+
+  // swipe support on touch devices (prévia principal)
   let touchStartX = null;
-  root.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  root.addEventListener('touchend', (e) => {
+  wrap.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  wrap.addEventListener('touchend', (e) => {
     if (touchStartX === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+    if (Math.abs(dx) > 40) { dx < 0 ? goNext() : goPrev(); }
     touchStartX = null;
   }, { passive: true });
 
-  render();
+  window.addEventListener('resize', slideTrack);
+
+  renderMain();
 })();
 
 // NEWSLETTER (demo, sem backend)

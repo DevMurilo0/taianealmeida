@@ -36,12 +36,24 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <div class="eyebrow">Lançamento do livro</div>
-      <h1 class="fold-title" id="foldTitle">
-        <span class="line2">NECROPOLÍTICA</span><br>
-        <span class="line1">E REFLEXÕES</span>
-      </h1>
+      <div class="fold-perspective">
+        <h1 class="fold-title" id="foldTitle">
+          <span class="line2">NECROPOLÍTICA</span><br>
+          <span class="line1">E REFLEXÕES</span>
+        </h1>
+      </div>
       <h1 class="hero-sub">ACERCA DA POPULAÇÃO NEGRA NO TERRITORIO BAIANO</h1>
-      <p class="hero-tagline">Juventude, Segurança pública e Corpos silenciados</p>
+      <p class="hero-tagline">
+        <span class="rotating-text-wrapper">
+          <span class="rotating-text-static">Uma reflexão sobre</span>
+          <span class="rotating-text" id="rotatingText">
+            <span class="rotating-text__item is-active">Juventude</span>
+            <span class="rotating-text__item">Segurança Pública</span>
+            <span class="rotating-text__item">Necropolítica</span>
+            <span class="rotating-text__item">Resistência</span>
+          </span>
+        </span>
+      </p>
     </div>
   </section>
 
@@ -53,7 +65,7 @@
     <div class="container sinopse-grid">
       <div class="sinopse-text reveal from-left">
         <span class="sinopse-badge">Sinopse (versão provisória)</span>
-        <h2 class="section-title">Uma obra sobre mídia, poder e o direito à vida</h2>
+        <h2 class="section-title split-text">Uma obra sobre mídia, poder e o direito à vida</h2>
         <p>A partir da Chacina do Cabula, ocorrida em 2015 em Salvador, este livro investiga como a imprensa baiana
           narrou o episódio e as disputas de sentido que envolveram versões policiais, denúncias do Ministério Público e
           as vozes silenciadas das vítimas e de suas famílias.</p>
@@ -71,10 +83,14 @@
 
   <section class="quote-section">
     <div class="container quote-photo-grid">
-      <blockquote class="quote-block quote-left reveal from-left">
-        Reconhecer os mecanismos que naturalizam determinadas mortes significa também reafirmar o direito à vida, à
-        memória, à justiça e à dignidade humana.
-      </blockquote>
+      <div class="sobre-mim reveal from-left">
+        <span class="sobre-mim-label">Um pouco sobre mim...</span>
+        <p>Sou baiana, socióloga por formação e pesquisadora por convicção. Desde muito cedo, o que me movia era
+          entender por que certas histórias são contadas — e outras, silenciadas.</p>
+        <p>Depois de anos estudando as relações entre mídia, segurança pública e violência de Estado, entendi que não
+          bastava escrever só para a academia. Este livro nasceu da vontade de levar essas reflexões para além dos
+          muros da universidade, para quem viveu — e vive — essas histórias na pele.</p>
+      </div>
       <div class="quote-photo-frame reveal from-right">
         <img src="assets/taiane-candid.jpg" alt="Taiane Almeida Santos">
       </div>
@@ -121,12 +137,21 @@
             </svg>
             Comprar na Amazon
           </a>
+
+          <div class="livro-newsletter">
+            <p class="ln-caption">Seja avisado(a) do lançamento e para outras novidades</p>
+            <form class="nl-form" id="nlForm">
+              <input type="email" placeholder="seu@email.com" required>
+              <button type="submit">Quero saber</button>
+            </form>
+            <p class="nl-msg" id="nlMsg"></p>
+          </div>
         </div>
       </div>
       <div class="reveal from-right">
         <span class="section-label">O Livro</span>
-        <h2 class="livro-title">NECROPOLÍTICA <span class="red">E REFLEXÕES</span> ACERCA DA POPULAÇÃO NEGRA NO
-          TERRITÓRIO BAIANO</h2>
+        <h2 class="livro-title split-text" data-split-preserve-html="true">NECROPOLÍTICA <span class="red">
+            E REFLEXÕES</span> ACERCA DA POPULAÇÃO NEGRA NO TERRITÓRIO BAIANO</h2>
         <p class="livro-subtitle">Juventude, segurança pública e corpos silenciados</p>
         <div class="livro-meta">
           <span class="meta-pill">Autopublicação</span>
@@ -134,44 +159,32 @@
           <span class="meta-pill">Feira de Santana, BA</span>
         </div>
 
-        <div class="book-flip" id="bookFlip" aria-label="Prévia de páginas do livro">
-          <div class="book-flip__frame">
-            <div class="book" id="flipBook">
-              <input type="checkbox" class="book__checkbox" id="flip-23">
-              <label for="flip-23" class="book__page" style="z-index:5">
-                <img src="assets/book-pages/page-23.jpg" alt="Página 23 do livro" draggable="false">
-              </label>
-
-              <input type="checkbox" class="book__checkbox" id="flip-24">
-              <label for="flip-24" class="book__page" style="z-index:4">
-                <img src="assets/book-pages/page-24.jpg" alt="Página 24 do livro" draggable="false">
-              </label>
-
-              <input type="checkbox" class="book__checkbox" id="flip-25">
-              <label for="flip-25" class="book__page" style="z-index:3">
-                <img src="assets/book-pages/page-25.jpg" alt="Página 25 do livro" draggable="false">
-              </label>
-
-              <input type="checkbox" class="book__checkbox" id="flip-26">
-              <label for="flip-26" class="book__page" style="z-index:2">
-                <img src="assets/book-pages/page-26.jpg" alt="Página 26 do livro" draggable="false">
-              </label>
-
-              <label class="book__page" style="z-index:1">
-                <img src="assets/book-pages/page-27.jpg" alt="Página 27 do livro" draggable="false">
-              </label>
+        <div class="book-spread-wrap" id="bookSpread">
+          <button type="button" class="book-spread-viewport" id="spreadFrame"
+            aria-label="Ampliar prévia das páginas do livro">
+            <div class="book-spread-track" id="spreadTrack">
+              <img class="spread-img" src="assets/book-pages/spread-23-24.png" alt="Páginas 23–24 do livro"
+                draggable="false">
+              <img class="spread-img" src="assets/book-pages/spread-25-26.png" alt="Páginas 25–26 do livro"
+                draggable="false">
             </div>
-            <div class="book-flip__spine" aria-hidden="true"></div>
-          </div>
+            <span class="book-spread__zoom-hint" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+                <path d="M8 11h6M11 8v6" stroke-linecap="round" />
+              </svg>
+            </span>
+          </button>
           <div class="book-flip__controls">
-            <button type="button" class="flip-btn" id="flipPrev" aria-label="Página anterior">
+            <button type="button" class="flip-btn" id="spreadPrev" aria-label="Páginas anteriores">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg>
             </button>
-            <span class="flip-indicator" id="flipIndicator">Pág. 23</span>
-            <button type="button" class="flip-btn" id="flipNext" aria-label="Próxima página">
+            <span class="flip-indicator" id="spreadIndicator">Pág. 23–24</span>
+            <button type="button" class="flip-btn" id="spreadNext" aria-label="Próximas páginas">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round" />
@@ -183,19 +196,69 @@
     </div>
   </section>
 
+  <!-- BOOK LIGHTBOX (zoom da prévia de páginas) -->
+  <div class="book-lightbox" id="bookLightbox" aria-hidden="true">
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+      </svg>
+    </button>
+    <div class="book-lightbox__stage">
+      <img class="book-lightbox__img" id="lightboxImg" src="" alt="">
+    </div>
+    <div class="book-lightbox__controls">
+      <button type="button" class="flip-btn" id="lightboxPrev" aria-label="Páginas anteriores">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+      <span class="flip-indicator" id="lightboxIndicator">Pág. 23–24</span>
+      <button type="button" class="flip-btn" id="lightboxNext" aria-label="Próximas páginas">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <!-- QUOTE 3 - right -->
 
+  <!--
+  <section class="quote-section">
+    <div class="container">
+      <blockquote class="quote-block quote-right reveal from-right">
+        Reconhecer os mecanismos que naturalizam determinadas mortes significa também reafirmar o direito à vida, à
+        memória, à justiça e à dignidade humana.
+      </blockquote>
+    </div>
+  </section>
+-->
 
   <!-- AUTORA -->
   <section class="autora" id="autora">
     <div class="container autora-grid">
-      <div class="autora-photo reveal from-left">
-        <img src="assets/autora.jpg" alt="Taiane Almeida Santos">
+      <div class="autora-photo-col reveal from-left">
+        <div class="autora-photo">
+          <img src="assets/autora.jpg" alt="Taiane Almeida Santos">
+        </div>
+        <div class="orbit" style="--rx:150px; --ry:78px;" aria-hidden="true">
+          <div class="orbit-item" data-angle="0">
+            <img src="assets/orbit/livro-capa.png" alt="">
+          </div>
+          <div class="orbit-item" data-angle="120">
+            <img src="assets/orbit/sacola.png" alt="">
+          </div>
+          <div class="orbit-item" data-angle="240">
+            <img src="assets/orbit/marcador.png" alt="">
+          </div>
+        </div>
       </div>
       <div class="reveal from-right">
         <span class="section-label">A Autora</span>
         <p class="autora-kicker">Escritora, produtora e cientista social</p>
-        <h2 class="autora-name">Taiane Almeida Santos</h2>
+        <h2 class="autora-name split-text">Taiane Almeida Santos</h2>
         <div class="autora-bio">
           <p>Cientista social, mestra em Ciências Sociais pela Universidade Federal do Recôncavo da Bahia (UFRB),
             professora de Sociologia, pesquisadora e produtora cultural. Sua trajetória é marcada pelo estudo das
@@ -207,7 +270,7 @@
           <li>Pós-graduanda em Cultura Afro-Brasileira e Povos Indígenas (IFBAIANO)</li>
           <li>Bacharel em Ciências Sociais (UFRB)</li>
         </ul>
-        <div class="contatos">
+        <div class="contatos" id="contato">
           <a class="contato-chip" href="https://wa.me/5575992184028" target="_blank">
             <svg class="chip-icon" viewBox="0 0 24 24" fill="currentColor">
               <path
@@ -243,7 +306,7 @@
     </div>
   </section>
 
-  <section class="quote-section">
+  <section class="quote-section quote-section--tight">
     <div class="container">
       <blockquote class="quote-block quote-right reveal from-right">
         A violência não se distribui ao acaso, ela se inscreve em corpos e territórios historicamente marcados pelas
@@ -267,27 +330,48 @@
   <section class="depoimentos" id="depoimentos">
     <div class="container">
       <span class="section-label">Depoimentos</span>
-      <h2 class="section-title" style="color:var(--cream)">O que dizem sobre a obra</h2>
+      <h2 class="section-title split-text" style="color:var(--cream)">O que dizem sobre a obra</h2>
     </div>
     <div class="container" style="margin-top:50px;">
-      <div class="dep-track">
-        <div class="dep-card reveal from-bottom">
-          <p class="dep-quote">"Um trabalho rigoroso que conecta teoria social e realidade concreta das periferias
-            baianas com muita sensibilidade."</p>
-          <div class="dep-name">Nome do(a) pesquisador(a)</div>
-          <div class="dep-role">Instituição a confirmar</div>
-        </div>
-        <div class="dep-card reveal from-bottom">
-          <p class="dep-quote">"Taiane consegue transformar uma dissertação acadêmica densa em uma leitura urgente e
-            acessível a todos os públicos."</p>
-          <div class="dep-name">Nome do(a) professor(a)</div>
-          <div class="dep-role">Instituição a confirmar</div>
-        </div>
-        <div class="dep-card reveal from-bottom">
-          <p class="dep-quote">"Uma contribuição essencial para pensar racismo, mídia e segurança pública no Brasil
-            contemporâneo."</p>
-          <div class="dep-name">Nome do(a) colega</div>
-          <div class="dep-role">Instituição a confirmar</div>
+      <div class="dep-viewport reveal from-bottom">
+        <div class="dep-track">
+          <div class="dep-card">
+            <p class="dep-quote">"Um trabalho rigoroso que conecta teoria social e realidade concreta das periferias
+              baianas com muita sensibilidade."</p>
+            <div class="dep-name">Nome do(a) pesquisador(a)</div>
+            <div class="dep-role">Instituição a confirmar</div>
+          </div>
+          <div class="dep-card">
+            <p class="dep-quote">"Taiane consegue transformar uma dissertação acadêmica densa em uma leitura urgente e
+              acessível a todos os públicos."</p>
+            <div class="dep-name">Nome do(a) professor(a)</div>
+            <div class="dep-role">Instituição a confirmar</div>
+          </div>
+          <div class="dep-card">
+            <p class="dep-quote">"Uma contribuição essencial para pensar racismo, mídia e segurança pública no Brasil
+              contemporâneo."</p>
+            <div class="dep-name">Nome do(a) colega</div>
+            <div class="dep-role">Instituição a confirmar</div>
+          </div>
+          <!-- cópia dos mesmos cards, usada só pra fechar o loop infinito -->
+          <div class="dep-card" aria-hidden="true">
+            <p class="dep-quote">"Um trabalho rigoroso que conecta teoria social e realidade concreta das periferias
+              baianas com muita sensibilidade."</p>
+            <div class="dep-name">Nome do(a) pesquisador(a)</div>
+            <div class="dep-role">Instituição a confirmar</div>
+          </div>
+          <div class="dep-card" aria-hidden="true">
+            <p class="dep-quote">"Taiane consegue transformar uma dissertação acadêmica densa em uma leitura urgente e
+              acessível a todos os públicos."</p>
+            <div class="dep-name">Nome do(a) professor(a)</div>
+            <div class="dep-role">Instituição a confirmar</div>
+          </div>
+          <div class="dep-card" aria-hidden="true">
+            <p class="dep-quote">"Uma contribuição essencial para pensar racismo, mídia e segurança pública no Brasil
+              contemporâneo."</p>
+            <div class="dep-name">Nome do(a) colega</div>
+            <div class="dep-role">Instituição a confirmar</div>
+          </div>
         </div>
       </div>
       <p class="dep-note">* Depoimentos simulados para este protótipo; serão substituídos pelas falas reais assim que
@@ -299,32 +383,39 @@
   <section class="trabalhos" id="trabalhos">
     <div class="container">
       <span class="section-label">Além do livro</span>
-      <h2 class="section-title">Pesquisa e produção cultural</h2>
-      <div class="trab-grid">
-        <div class="trab-card reveal from-bottom">
-          <svg class="trab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M4 4h16v16H4z" />
-            <path d="M8 8h8M8 12h8M8 16h5" />
-          </svg>
-          <h3>Dissertação de mestrado</h3>
-          <p>Mídia, Segurança Pública e a Chacina do Cabula (PPG em Ciências Sociais: Cultura, Desigualdades e
-            Desenvolvimento, UFRB).</p>
-        </div>
-        <div class="trab-card reveal from-bottom">
-          <svg class="trab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3 3" />
-          </svg>
-          <h3>Artigos publicados</h3>
-          <p>Espaço reservado para os artigos e publicações da autora; conteúdo a ser enviado.</p>
-        </div>
-        <div class="trab-card reveal from-bottom">
-          <svg class="trab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M3 12l9-9 9 9M5 10v10h14V10" />
-          </svg>
-          <h3>Projetos de cultura</h3>
-          <p>Ações de produção cultural e valorização da memória em comunidades; descrição a definir com a autora.</p>
-        </div>
+      <h2 class="section-title split-text">Pesquisa e produção cultural</h2>
+
+      <div class="pub-list">
+        <a class="pub-item reveal" href="https://juventudebr.emnuvens.com.br/juventudebr/article/view/204"
+          target="_blank" rel="noopener">
+          <span class="pub-dot" aria-hidden="true"></span>
+          <span class="pub-tag">Artigo · Revista Juventude.br, n. 18 (2021)</span>
+          <h3 class="pub-title">Jovens negros e necropolítica: a chacina do Cabula em Salvador–BA na mídia</h3>
+          <p class="pub-desc">Analisa o tratamento dado pela mídia impressa baiana à Chacina do Cabula (2015), tendo a
+            necropolítica como uma das referências teóricas centrais.</p>
+          <span class="pub-link">Ler artigo <span aria-hidden="true">→</span></span>
+        </a>
+
+        <a class="pub-item reveal" href="https://www.abant.org.br/files/1539619999_ARQUIVO_ARTIGOABA-2018.pdf"
+          target="_blank" rel="noopener">
+          <span class="pub-dot" aria-hidden="true"></span>
+          <span class="pub-tag">31ª Reunião Brasileira de Antropologia · Brasília/DF (2018)</span>
+          <h3 class="pub-title">Mídia, Segurança Pública e a Chacina do Cabula</h3>
+          <p class="pub-desc">Trabalho em coautoria com Herbert Toledo Martins (UFSB), que examina, por Análise de
+            Conteúdo, a cobertura dos jornais A Tarde e Correio sobre a chacina.</p>
+          <span class="pub-link">Baixar PDF <span aria-hidden="true">→</span></span>
+        </a>
+
+        <a class="pub-item reveal" href="https://smart.institutoidv.org/2024/pdvl/uploads/2292.pdf" target="_blank"
+          rel="noopener">
+          <span class="pub-dot" aria-hidden="true"></span>
+          <span class="pub-tag">Pôster · COINTER PDVL, Instituto IDV (2024)</span>
+          <h3 class="pub-title">Ensino de Filosofia e Cinema: o uso de filmes como estratégia de aprendizagem de
+            conceitos e problemas filosóficos</h3>
+          <p class="pub-desc">Em coautoria com Samuel Sampaio Castro e Mauricio da Silva Lima, relata a eletiva Cine
+            Filosofia, realizada com turmas do ensino médio em Gravatá (PE).</p>
+          <span class="pub-link">Baixar PDF <span aria-hidden="true">→</span></span>
+        </a>
       </div>
     </div>
   </section>
@@ -342,32 +433,19 @@
     </div>
   </section>
 
-  <!-- NEWSLETTER -->
-  <section class="newsletter" id="contato">
-    <div class="container">
-      <h2>Seja avisado(a) do lançamento</h2>
-      <p>Deixe seu e-mail e receba novidades sobre o livro, a agenda de eventos e o material extra.</p>
-      <form class="nl-form" id="nlForm">
-        <input type="email" placeholder="seu@email.com" required>
-        <button type="submit">Quero saber</button>
-      </form>
-      <p class="nl-msg" id="nlMsg"></p>
-    </div>
-  </section>
-
-  <!-- APOIO / LOGO LOOP -->
+  <!-- APOIO / RÉGUA DE MARCAS -->
   <div class="apoio">
     <p class="apoio-label">Apoio institucional</p>
-    <div class="logoloop">
-      <div class="logoloop-track" id="logoTrack">
-        <img src="assets/logo-feira.png" alt="Feira de Santana">
-        <img src="assets/logo-snc.png" alt="Sistema Nacional de Cultura">
-        <img src="assets/logo-aldir.png" alt="Política Nacional Aldir Blanc">
-        <img src="assets/logo-minc.png" alt="Ministério da Cultura">
-        <img src="assets/logo-feira.png" alt="Feira de Santana">
-        <img src="assets/logo-snc.png" alt="Sistema Nacional de Cultura">
-        <img src="assets/logo-aldir.png" alt="Política Nacional Aldir Blanc">
-        <img src="assets/logo-minc.png" alt="Ministério da Cultura">
+    <div class="regua-marcas">
+      <div class="regua-col">
+        <span class="regua-tag">Patrocínio</span>
+        <img src="assets/logo-feira-patrocinio.png" alt="Prefeitura Municipal de Feira de Santana">
+      </div>
+      <div class="regua-divider" aria-hidden="true"></div>
+      <div class="regua-col regua-col--wide">
+        <span class="regua-tag">Realização</span>
+        <img src="assets/logo-realizacao-eleitoral.png"
+          alt="Sistema Nacional de Cultura, Política Nacional Aldir Blanc de Fomento à Cultura e Ministério da Cultura">
       </div>
     </div>
   </div>
@@ -381,7 +459,10 @@
         <a href="#depoimentos">Depoimentos</a>
         <a href="https://www.instagram.com/taialmeida2/" target="_blank">Instagram</a>
       </div>
+
       <p class="foot-legal">Desenvolvido por Murilo</p>
+
+      <p class="foot-legal">Site desenvolvido por Murilo Gabriel</p>
     </div>
   </footer>
 
