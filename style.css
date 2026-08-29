@@ -71,6 +71,26 @@ img {
   z-index: 9999;
 }
 
+/* ---------- Scroll progress ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--red-dark), var(--red));
+  transform: scaleX(var(--scroll, 0));
+  transform-origin: 0 50%;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    display: none;
+  }
+}
+
 /* ---------- Nav ---------- */
 nav {
   position: fixed;
@@ -218,7 +238,10 @@ nav.scrolled {
 /* ---------- Reveal on scroll ---------- */
 .reveal {
   opacity: 0;
-  transition: opacity 1s cubic-bezier(.19, 1, .22, 1), transform 1s cubic-bezier(.19, 1, .22, 1);
+  filter: blur(8px);
+  transition: opacity 1.1s cubic-bezier(.19, 1, .22, 1),
+    transform 1.1s cubic-bezier(.19, 1, .22, 1),
+    filter 1.1s cubic-bezier(.19, 1, .22, 1);
 }
 
 .reveal.from-left {
@@ -239,7 +262,14 @@ nav.scrolled {
 
 .reveal.in-view {
   opacity: 1;
+  filter: blur(0);
   transform: translate(0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    filter: none;
+  }
 }
 
 @media(max-width:720px) {
@@ -253,6 +283,42 @@ nav.scrolled {
 
   .reveal.from-bottom {
     transform: translateY(28px);
+  }
+}
+
+/* ---------- Ambient glow (seções escuras) ----------
+   Dois brilhos radiais vermelhos, borrados, que se deslocam
+   suavemente conforme a página é rolada — usa a variável
+   --scroll (0 a 1, atualizada via JS) para dar continuidade
+   visual entre as seções escuras do site. */
+.ambient-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.ambient-glow::before {
+  content: '';
+  position: absolute;
+  inset: -20% -10%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(480px circle at calc(15% + var(--scroll, 0) * 55%) calc(15% + var(--scroll, 0) * 70%), rgba(200, 31, 31, .20), transparent 65%),
+    radial-gradient(560px circle at calc(88% - var(--scroll, 0) * 50%) calc(85% - var(--scroll, 0) * 55%), rgba(138, 20, 20, .16), transparent 70%);
+  filter: blur(70px);
+  will-change: background;
+}
+
+.ambient-glow>* {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-glow::before {
+    background:
+      radial-gradient(480px circle at 30% 30%, rgba(200, 31, 31, .18), transparent 65%),
+      radial-gradient(560px circle at 75% 70%, rgba(138, 20, 20, .14), transparent 70%);
   }
 }
 
@@ -301,6 +367,55 @@ nav.scrolled {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(12, 8, 6, .55) 0%, rgba(12, 8, 6, .25) 40%, rgba(12, 8, 6, .85) 100%);
+}
+
+/* Cortinas que se abrem na carga do hero, revelando o fundo e o título
+   em vez de simplesmente deixar o texto surgir sobre a cena já visível. */
+.hero-curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 51%;
+  background: var(--black);
+  z-index: 3;
+}
+
+.hero-curtain--left {
+  left: 0;
+  animation: curtainOpenLeft 1.15s cubic-bezier(.76, 0, .24, 1) forwards;
+  border-right: 1px solid rgba(200, 31, 31, .35);
+}
+
+.hero-curtain--right {
+  right: 0;
+  animation: curtainOpenRight 1.15s cubic-bezier(.76, 0, .24, 1) forwards;
+  border-left: 1px solid rgba(200, 31, 31, .35);
+}
+
+@keyframes curtainOpenLeft {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes curtainOpenRight {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-curtain {
+    display: none;
+  }
 }
 
 .hero-content {
@@ -387,7 +502,7 @@ nav.scrolled {
   margin-top: 26px;
   opacity: 0;
   transform: translateY(24px);
-  animation: heroFadeUp 1s cubic-bezier(.22, 1, .36, 1) 0.8s forwards;
+  animation: heroFadeUp 1s cubic-bezier(.22, 1, .36, 1) 1.05s forwards;
 }
 
 .hero-tagline {
@@ -398,7 +513,7 @@ nav.scrolled {
   color: var(--gray);
   opacity: 0;
   transform: translateY(20px);
-  animation: heroFadeUp 1s cubic-bezier(.22, 1, .36, 1) 1.1s forwards;
+  animation: heroFadeUp 1s cubic-bezier(.22, 1, .36, 1) 1.35s forwards;
 }
 
 @keyframes heroFadeUp {
@@ -481,7 +596,6 @@ nav.scrolled {
   position: absolute;
   bottom: 34px;
   left: 50%;
-  transform: translateX(-50%);
   z-index: 2;
   color: var(--cream);
   font-size: 11px;
@@ -491,10 +605,53 @@ nav.scrolled {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  opacity: .75;
+  opacity: 0;
+  transform: translateX(-50%) translateY(14px);
+  animation: scrollCueIn 1s cubic-bezier(.22, 1, .36, 1) 2.15s forwards;
+}
+
+@keyframes scrollCueIn {
+  to {
+    opacity: .75;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue {
+    animation: none;
+    opacity: .75;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.scroll-cue .line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -100%;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(var(--cream), transparent);
+  animation: scrollCueDrip 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue .line::after {
+    animation: none;
+    display: none;
+  }
+}
+
+@keyframes scrollCueDrip {
+  to {
+    top: 100%;
+  }
 }
 
 .scroll-cue .line {
+  position: relative;
+  overflow: hidden;
   width: 1px;
   height: 38px;
   background: linear-gradient(var(--red), transparent);
@@ -512,6 +669,13 @@ nav.scrolled {
 
   100% {
     opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue .line {
+    animation: none;
+    opacity: .6;
   }
 }
 

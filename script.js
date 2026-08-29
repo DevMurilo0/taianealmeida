@@ -4,6 +4,71 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 });
 
+// SCROLL PROGRESS + PARALLAX + AMBIENT GLOW
+// Um único loop, sincronizado com requestAnimationFrame, que:
+// 1) atualiza a variável --scroll (0 a 1) usada pela barra de progresso
+//    e pelo brilho ambiente das seções escuras;
+// 2) move o fundo do hero e as imagens marcadas com [data-parallax]
+//    em velocidades diferentes, dando profundidade ao scroll.
+(function () {
+  const root = document.documentElement;
+  const heroBg = document.querySelector('.hero-bg');
+  const parallaxEls = Array.from(document.querySelectorAll('[data-parallax]'));
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let ticking = false;
+  let heroBgReady = false;
+
+  // A animação de zoom de entrada do hero (heroIntro) controla o transform
+  // via CSS até terminar; só depois disso o parallax por JS assume o controle,
+  // evitando que os dois fiquem competindo pela mesma propriedade.
+  if (heroBg && !prefersReduced) {
+    heroBg.addEventListener('animationend', (e) => {
+      if (e.animationName === 'heroIntro') {
+        heroBg.style.animation = 'none';
+        heroBgReady = true;
+        update();
+      }
+    });
+  }
+
+  function update() {
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? Math.min(Math.max(scrollY / maxScroll, 0), 1) : 0;
+    root.style.setProperty('--scroll', progress.toFixed(4));
+
+    if (!prefersReduced) {
+      if (heroBgReady) {
+        const shift = Math.min(scrollY * 0.28, 140);
+        heroBg.style.transform = `scale(1.08) translateY(${shift.toFixed(1)}px)`;
+      }
+
+      parallaxEls.forEach(el => {
+        const speed = parseFloat(el.dataset.parallax) || 0.15;
+        const rect = el.getBoundingClientRect();
+        // Só recalcula se o elemento está perto da viewport, por performance.
+        if (rect.bottom < -400 || rect.top > window.innerHeight + 400) return;
+        const centerOffset = (rect.top + rect.height / 2) - window.innerHeight / 2;
+        el.style.transform = `translateY(${(-centerOffset * speed).toFixed(2)}px)`;
+      });
+    }
+
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
+})();
+
 // ORBIT IMAGES — mockups do livro girando em órbita elíptica ao redor da foto da autora
 (function () {
   const orbit = document.querySelector('.orbit');
