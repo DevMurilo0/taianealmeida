@@ -254,7 +254,12 @@ window.addEventListener('scroll', () => {
   }));
   if (!items.length) return;
 
-  const DURATION = 16000; // ms por volta completa
+  const DURATION = 16000; // ms por volta completa a velocidade normal
+  const TWO_PI = Math.PI * 2;
+  const OMEGA = TWO_PI / DURATION; // rad/ms em velocidade normal
+  const SEEK_DURATION = 550; // ms para trazer o item para frente ao passar o mouse
+  const HIGHLIGHT_SCALE = 1.28; // quanto o item em destaque cresce
+  const EASE = 0.22; // suavização do crescimento/encolhimento
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let rx = 0, ry = 0;
@@ -274,28 +279,100 @@ window.addEventListener('scroll', () => {
     };
   }
 
-  function render(angleOffset) {
+  // extra de escala por item, animado suavemente em direção ao alvo (0 = normal, 1 = destaque total)
+  items.forEach(item => { item.extra = 0; item.extraTarget = 0; });
+
+  function render(angleOffset, dt) {
     items.forEach(item => {
       const { x, y, depth } = place(item.angle + angleOffset);
-      const scale = 0.72 + depth * 0.3;
+      item.extra += (item.extraTarget - item.extra) * Math.min(1, EASE * (dt / 16 || 1));
+
+      const scale = (0.72 + depth * 0.3) * (1 + item.extra * (HIGHLIGHT_SCALE - 1));
       const opacity = 0.6 + depth * 0.4;
       item.el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${scale})`;
       item.el.style.opacity = opacity;
-      item.el.style.zIndex = Math.round(depth * 100);
+      item.el.style.zIndex = item.extra > 0.01 ? 200 : Math.round(depth * 100);
+      item.el.style.filter = item.extra > 0.01
+        ? `drop-shadow(0 ${18 + item.extra * 10}px ${26 + item.extra * 14}px rgba(0,0,0,${0.35 + item.extra * 0.15}))`
+        : '';
     });
   }
 
   measure();
 
+  // ---- Estado da rotação: 'normal' | 'seeking' | 'paused'
+  let mode = 'normal';
+  let angleOffset = 0;
+  let seekFrom = 0, seekTo = 0, seekElapsed = 0;
+  let hovered = null;
+
+  function angleOfItem(item) {
+    // ângulo (mod 2π) em que o item fica exatamente na frente (depth máximo)
+    return Math.PI / 2 - item.angle;
+  }
+
+  function shortestForwardDelta(from, to) {
+    return ((to - from) % TWO_PI + TWO_PI) % TWO_PI;
+  }
+
+  function startSeek(item) {
+    hovered = item;
+    const target = angleOfItem(item);
+    const delta = shortestForwardDelta(angleOffset, target);
+
+    if (delta < 0.03 || delta > TWO_PI - 0.03) {
+      // já está praticamente na frente: só pausa e destaca
+      angleOffset = target;
+      mode = 'paused';
+    } else {
+      seekFrom = angleOffset;
+      seekTo = angleOffset + delta;
+      seekElapsed = 0;
+      mode = 'seeking';
+    }
+    items.forEach(it => { it.extraTarget = it === item ? 1 : 0; });
+  }
+
+  function clearHover() {
+    hovered = null;
+    mode = prefersReduced ? 'paused-static' : 'normal';
+    items.forEach(it => { it.extraTarget = 0; });
+  }
+
+  items.forEach(item => {
+    item.el.addEventListener('mouseenter', () => startSeek(item));
+    item.el.addEventListener('mouseleave', () => {
+      if (hovered === item) clearHover();
+    });
+    item.el.addEventListener('focus', () => startSeek(item));
+    item.el.addEventListener('blur', () => {
+      if (hovered === item) clearHover();
+    });
+  });
+
   if (prefersReduced) {
-    render(0);
+    render(0, 16);
   } else {
     let raf;
-    const start = performance.now();
+    let last = performance.now();
+
     function tick(now) {
-      const elapsed = (now - start) % DURATION;
-      const angleOffset = (elapsed / DURATION) * Math.PI * 2;
-      render(angleOffset);
+      const dt = Math.min(now - last, 48); // evita saltos após aba inativa
+      last = now;
+
+      if (mode === 'normal') {
+        angleOffset = (angleOffset + OMEGA * dt) % TWO_PI;
+      } else if (mode === 'seeking') {
+        seekElapsed += dt;
+        const t = Math.min(1, seekElapsed / SEEK_DURATION);
+        // ease-out para chegada suave na frente
+        const eased = 1 - Math.pow(1 - t, 3);
+        angleOffset = (seekFrom + (seekTo - seekFrom) * eased) % TWO_PI;
+        if (t >= 1) mode = 'paused';
+      }
+      // 'paused': angleOffset congelado, só o crescimento do item continua animando
+
+      render(angleOffset, dt);
       raf = requestAnimationFrame(tick);
     }
     raf = requestAnimationFrame(tick);

@@ -4,11 +4,23 @@
   --red: #c81f1f;
   --red-dark: #8a1414;
   --cream: #f3ede1;
-  --page-bg: #e8e0d1;
+  --page-bg: #d9d1c2;
   --white-soft: #f4eee0;
   --gray: #8f8a82;
   --gray-dark: #4a453f;
   --white: #ffffff;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='2.2' intercept='-0.35'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Textura granulada reutilizável para os fundos claros (--page-bg) */
+body,
+.sinopse,
+.autora,
+.trabalhos {
+  background-color: var(--page-bg);
+  background-image: var(--grain);
+  background-repeat: repeat;
+  background-blend-mode: overlay;
 }
 
 * {
@@ -23,7 +35,6 @@ html {
 
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--page-bg);
   color: var(--black);
   overflow-x: hidden;
   cursor: default;
@@ -791,6 +802,40 @@ img {
   order: 2;
 }
 
+/* ---------- Marca d'água "Um pouco sobre mim" ---------- */
+.sobre-mim-section {
+  overflow: hidden;
+}
+
+.sobre-mim-section .quote-photo-grid {
+  position: relative;
+  z-index: 0;
+}
+
+.autora-watermark {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0;
+  transform: translateY(80px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.autora-watermark span {
+  font-family: 'Bitter', serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-size: clamp(4.5rem, 13vw, 11rem);
+  line-height: 1;
+  letter-spacing: .01em;
+  color: rgba(12, 8, 6, .14);
+}
+
 .quote-photo-frame {
   position: relative;
   max-width: 380px;
@@ -962,10 +1007,6 @@ section {
 }
 
 /* ---------- Sinopse ---------- */
-.sinopse {
-  background: var(--page-bg);
-}
-
 .sinopse-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1615,10 +1656,25 @@ section {
 
 /* ---------- Autora ---------- */
 .autora {
-  background: var(--page-bg);
+  background-color: var(--page-bg);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Gradient Waves decorative background (behind content only) */
+.autora-gradient-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 .autora-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: .9fr 1.1fr;
   gap: 80px;
@@ -1661,7 +1717,9 @@ section {
   top: 50%;
   left: 50%;
   width: 192px;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform;
 }
 
 .orbit-item img {
@@ -2046,10 +2104,6 @@ section {
 }
 
 /* ---------- Trabalhos ---------- */
-.trabalhos {
-  background: var(--page-bg);
-}
-
 .pub-list {
   position: relative;
   margin-top: 46px;
