@@ -4,24 +4,74 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 });
 
-// SCROLL PROGRESS + PARALLAX + AMBIENT GLOW
-// Um único loop, sincronizado com requestAnimationFrame, que:
-// 1) atualiza a variável --scroll (0 a 1) usada pela barra de progresso
-//    e pelo brilho ambiente das seções escuras;
-// 2) move o fundo do hero e as imagens marcadas com [data-parallax]
-//    em velocidades diferentes, dando profundidade ao scroll.
+// SMOOTH INERTIAL SCROLLING ("suave e leve")
+(function () {
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  if (prefersReduced || isTouch) return; // Mantém toque nativo responsivo em dispositivos móveis
+
+  let currentY = window.scrollY;
+  let targetY = window.scrollY;
+  let isRunning = false;
+  const friction = 0.16; // Aumentado de 0.075 para 0.16 (muito mais leve, ágil e responsivo)
+
+  function lerp(start, end, factor) {
+    return start + (end - start) * factor;
+  }
+
+  function smoothScrollStep() {
+    currentY = lerp(currentY, targetY, friction);
+
+    if (Math.abs(targetY - currentY) < 0.2) {
+      currentY = targetY;
+      window.scrollTo(0, currentY);
+      isRunning = false;
+      return;
+    }
+
+    window.scrollTo(0, currentY);
+    requestAnimationFrame(smoothScrollStep);
+  }
+
+  function startSmoothScroll() {
+    if (!isRunning) {
+      isRunning = true;
+      requestAnimationFrame(smoothScrollStep);
+    }
+  }
+
+  window.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    // Multiplicador 1.0 para uma rolagem direta, ágil e leve
+    targetY = Math.min(maxScroll, Math.max(0, targetY + e.deltaY * 1.0));
+    startSmoothScroll();
+  }, { passive: false });
+
+  window.addEventListener('scroll', () => {
+    if (!isRunning) {
+      currentY = window.scrollY;
+      targetY = window.scrollY;
+    }
+  });
+})();
+
+// SCROLL PROGRESS + PARALLAX + AMBIENT GLOW & INERTIAL SMOOTH SCROLL
 (function () {
   const root = document.documentElement;
   const heroBg = document.querySelector('.hero-bg');
+  const heroContent = document.querySelector('.hero-content');
   const parallaxEls = Array.from(document.querySelectorAll('[data-parallax]'));
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let ticking = false;
   let heroBgReady = false;
 
-  // A animação de zoom de entrada do hero (heroIntro) controla o transform
-  // via CSS até terminar; só depois disso o parallax por JS assume o controle,
-  // evitando que os dois fiquem competindo pela mesma propriedade.
+  // Smooth inertial scrolling variables
+  let currentScroll = window.scrollY || 0;
+  let targetScroll = window.scrollY || 0;
+  const ease = 0.1; // Smoothness factor (0.08 - 0.12 gives ideal fluid inertia)
+
   if (heroBg && !prefersReduced) {
     heroBg.addEventListener('animationend', (e) => {
       if (e.animationName === 'heroIntro') {
@@ -39,15 +89,21 @@ window.addEventListener('scroll', () => {
     root.style.setProperty('--scroll', progress.toFixed(4));
 
     if (!prefersReduced) {
-      if (heroBgReady) {
-        const shift = Math.min(scrollY * 0.28, 140);
+      if (heroBgReady || heroBg) {
+        const shift = Math.min(scrollY * 0.22, 140);
         heroBg.style.transform = `scale(1.08) translateY(${shift.toFixed(1)}px)`;
+      }
+
+      if (heroContent && scrollY < window.innerHeight * 1.1) {
+        const contentShift = scrollY * 0.32;
+        const opacity = Math.max(0, 1 - scrollY / (window.innerHeight * 0.7));
+        heroContent.style.transform = `translateY(${contentShift.toFixed(1)}px)`;
+        heroContent.style.opacity = opacity.toFixed(2);
       }
 
       parallaxEls.forEach(el => {
         const speed = parseFloat(el.dataset.parallax) || 0.15;
         const rect = el.getBoundingClientRect();
-        // Só recalcula se o elemento está perto da viewport, por performance.
         if (rect.bottom < -400 || rect.top > window.innerHeight + 400) return;
         const centerOffset = (rect.top + rect.height / 2) - window.innerHeight / 2;
         el.style.transform = `translateY(${(-centerOffset * speed).toFixed(2)}px)`;
