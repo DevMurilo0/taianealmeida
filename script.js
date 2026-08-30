@@ -69,6 +69,124 @@ window.addEventListener('scroll', () => {
   update();
 })();
 
+// LIVRO 3D — gira sozinho devagar e aceita ser arrastado a qualquer momento
+(function () {
+  const book = document.getElementById('book3d');
+  const shadow = document.querySelector('.book3d-shadow');
+  if (!book) return;
+
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let ry = -26;
+  let rx = 18;
+  const autoSpeed = 0.11; // graus por ms (aprox.), ajustado abaixo pelo delta de tempo
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let startRy = 0;
+  let startRx = 0;
+  let lastTs = null;
+  const RX_MIN = -22; // inclinando pra cima, mostrando um pouco do topo
+  const RX_MAX = 45;  // olhando bem de baixo, sem virar de cabeça pra baixo
+
+  // O giro automático só começa depois que o livro entrou na tela (ver
+  // IntersectionObserver abaixo). Antes disso o livro fica parado. Ao entrar,
+  // ele gira rápido algumas voltas e desacelera suavemente até o giro lento normal.
+  let rotationActive = false;
+  let entering = false;
+  let entryStart = null;
+  const entryBaseRy = ry;
+  const ENTRY_SPINS = 380;    // graus extras percorridos na entrada (pouco mais de 1 volta)
+  const ENTRY_DURATION = 3200; // ms, sincronizado com o deslize em CSS
+
+  function apply() {
+    book.style.setProperty('--ry', ry + 'deg');
+    book.style.setProperty('--rx', rx + 'deg');
+    if (shadow) {
+      const scale = 0.8 + 0.2 * Math.abs(Math.cos(ry * Math.PI / 180));
+      shadow.style.setProperty('--shadow-scale', scale.toFixed(3));
+    }
+  }
+
+  function frame(ts) {
+    if (entering) {
+      if (entryStart === null) entryStart = ts;
+      const t = Math.min(1, (ts - entryStart) / ENTRY_DURATION);
+      const eased = 1 - Math.pow(1 - t, 3); // ease-out cúbico: rápido no início, suave no fim
+      ry = entryBaseRy - ENTRY_SPINS * (1 - eased);
+      if (t >= 1) {
+        entering = false;
+        rotationActive = true;
+      }
+      lastTs = ts;
+    } else if (rotationActive && !dragging && !prefersReduced) {
+      if (lastTs != null) {
+        const dt = ts - lastTs;
+        ry += autoSpeed * (dt / 16.67);
+      }
+      lastTs = ts;
+    } else {
+      lastTs = ts;
+    }
+    apply();
+    requestAnimationFrame(frame);
+  }
+
+  book.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    startRy = ry;
+    startRx = rx;
+    book.setPointerCapture(e.pointerId);
+  });
+
+  book.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    ry = startRy + dx * 0.4;
+    rx = Math.min(RX_MAX, Math.max(RX_MIN, startRx - dy * 0.3));
+  });
+
+  function stopDrag() {
+    dragging = false;
+  }
+
+  book.addEventListener('pointerup', stopDrag);
+  book.addEventListener('pointercancel', stopDrag);
+
+  apply();
+  requestAnimationFrame(frame);
+
+  // Dispara a entrada (fade + deslize com "estouro" suave, controlados via CSS
+  // em .book3d-wrap) assim que a seção aparece na tela. O livro já chega girando:
+  // o giro rápido de entrada roda por cima do próprio deslize.
+  const wrap = document.getElementById('book3dWrap');
+  const wrapStage = wrap ? wrap.closest('.sinopse-mockup') : null;
+  if (wrap && 'IntersectionObserver' in window) {
+    const entryIo = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          wrap.classList.add('is-visible');
+          if (!prefersReduced) {
+            entering = true;
+            entryStart = null;
+          } else {
+            rotationActive = true;
+          }
+          entryIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    entryIo.observe(wrapStage || wrap);
+  } else if (wrap) {
+    wrap.classList.add('is-visible');
+    rotationActive = !prefersReduced;
+  }
+})();
+
 // ORBIT IMAGES — mockups do livro girando em órbita elíptica ao redor da foto da autora
 (function () {
   const orbit = document.querySelector('.orbit');
@@ -284,11 +402,42 @@ const io = new IntersectionObserver((entries) => {
     if (entry.isIntersecting) {
       const el = entry.target;
       io.unobserve(el);
-      setTimeout(() => el.classList.add('in-view'), 250);
+      const group = el.closest('.colab-grid');
+      // Cards de colaboradores entram em cascata (um depois do outro);
+      // o restante do site mantém o atraso fixo de sempre.
+      const stagger = group ? Array.from(group.children).indexOf(el) * 120 : 0;
+      setTimeout(() => el.classList.add('in-view'), 250 + stagger);
     }
   });
 }, { threshold: 0.35 });
 revealEls.forEach(el => io.observe(el));
+
+// COLABORADORES — tilt 3D que segue o cursor (só em telas com mouse)
+(function () {
+  const cards = document.querySelectorAll('.colab-card');
+  if (!cards.length) return;
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (prefersReduced || !hasHover) return;
+
+  cards.forEach(card => {
+    card.addEventListener('pointermove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const tiltX = (px - 0.5) * 14; // rotateY
+      const tiltY = (0.5 - py) * 14; // rotateX
+      card.style.setProperty('--tilt-x', tiltX.toFixed(2) + 'deg');
+      card.style.setProperty('--tilt-y', tiltY.toFixed(2) + 'deg');
+      card.style.setProperty('--pointer-x', (px * 100).toFixed(1) + '%');
+      card.style.setProperty('--pointer-y', (py * 100).toFixed(1) + '%');
+    });
+    card.addEventListener('pointerleave', () => {
+      card.style.setProperty('--tilt-x', '0deg');
+      card.style.setProperty('--tilt-y', '0deg');
+    });
+  });
+})();
 
 // DEPOIMENTOS — clique pausa o carrossel, mover o mouse depois retoma
 const depTrack = document.querySelector('.dep-track');
