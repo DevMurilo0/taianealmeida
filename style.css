@@ -1139,7 +1139,7 @@ section {
 .book3d-wrap {
   --book-w: min(300px, 74vw);
   --book-h: calc(var(--book-w) * 1.57);
-  --book-d: calc(var(--book-w) * 0.07);
+  --book-d: calc(var(--book-w) * 0.046);
   --bulge: calc(var(--book-w) * 0.018);
   --ry: -26deg;
   width: var(--book-w);

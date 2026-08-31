@@ -257,9 +257,9 @@ window.addEventListener('scroll', () => {
   const DURATION = 16000; // ms por volta completa a velocidade normal
   const TWO_PI = Math.PI * 2;
   const OMEGA = TWO_PI / DURATION; // rad/ms em velocidade normal
-  const SEEK_DURATION = 550; // ms para trazer o item para frente ao passar o mouse
+  const SEEK_DURATION = 950; // ms para trazer o item para frente ao passar o mouse (mais devagar)
   const HIGHLIGHT_SCALE = 1.28; // quanto o item em destaque cresce
-  const EASE = 0.22; // suavização do crescimento/encolhimento
+  const EASE = 0.14; // suavização do crescimento/encolhimento (mais fluido)
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let rx = 0, ry = 0;
@@ -324,13 +324,15 @@ window.addEventListener('scroll', () => {
       // já está praticamente na frente: só pausa e destaca
       angleOffset = target;
       mode = 'paused';
+      items.forEach(it => { it.extraTarget = it === item ? 1 : 0; });
     } else {
       seekFrom = angleOffset;
       seekTo = angleOffset + delta;
       seekElapsed = 0;
       mode = 'seeking';
+      // o crescimento só começa quando o item chegar na frente (ver tick())
+      items.forEach(it => { it.extraTarget = 0; });
     }
-    items.forEach(it => { it.extraTarget = it === item ? 1 : 0; });
   }
 
   function clearHover() {
@@ -365,10 +367,15 @@ window.addEventListener('scroll', () => {
       } else if (mode === 'seeking') {
         seekElapsed += dt;
         const t = Math.min(1, seekElapsed / SEEK_DURATION);
-        // ease-out para chegada suave na frente
-        const eased = 1 - Math.pow(1 - t, 3);
+        // ease-in-out: acelera suavemente e desacelera suavemente ao chegar na frente
+        const eased = t < 0.5
+          ? 4 * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
         angleOffset = (seekFrom + (seekTo - seekFrom) * eased) % TWO_PI;
-        if (t >= 1) mode = 'paused';
+        if (t >= 1) {
+          mode = 'paused';
+          if (hovered) hovered.extraTarget = 1; // só cresce depois de chegar na frente
+        }
       }
       // 'paused': angleOffset congelado, só o crescimento do item continua animando
 
