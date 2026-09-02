@@ -601,6 +601,16 @@ if (depTrack) {
       lastY = null;
     }
   });
+
+  // No toque não existe "mover o mouse": retoma ao tocar fora do carrossel
+  document.addEventListener('touchstart', (e) => {
+    if (!depTrack.classList.contains('paused')) return;
+    if (!depTrack.contains(e.target)) {
+      depTrack.classList.remove('paused');
+      lastX = null;
+      lastY = null;
+    }
+  }, { passive: true });
 }
 
 // TIMELINE "ALÉM DO LIVRO" — escalona os itens e cresce a linha ao entrar na tela
