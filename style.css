@@ -286,6 +286,7 @@ img {
 }
 
 @media (hover: hover) and (pointer: fine) {
+
   .quote-photo-inner img:hover,
   .autora-photo img:hover,
   .pub-item:hover img {
@@ -1059,6 +1060,14 @@ section {
   align-items: center;
 }
 
+.sinopse-grid .sinopse-text {
+  order: 1;
+}
+
+.sinopse-grid .sinopse-mockup {
+  order: 2;
+}
+
 .sinopse-text p {
   font-size: 1.05rem;
   line-height: 1.85;
@@ -1087,22 +1096,20 @@ section {
 
 @media(max-width:880px) {
   .sinopse-grid {
-    grid-template-columns: 1.5fr 1fr;
-    gap: 18px;
-    align-items: start;
+    display: block;
   }
 
   .sinopse-mockup {
+    float: right;
+    width: 34%;
+    max-width: 125px;
+    margin: 46px 4px 16px 20px;
     padding: 0;
   }
 
   .sinopse-text .section-title {
     font-size: clamp(1.25rem, 6vw, 2rem);
     margin-bottom: 16px;
-  }
-
-  .book3d-wrap {
-    --book-w: min(130px, 32vw);
   }
 }
 
@@ -1219,6 +1226,12 @@ section {
   -moz-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+}
+
+@media(max-width:880px) {
+  .book3d-wrap {
+    --book-w: min(115px, 30vw);
+  }
 }
 
 .book3d {
@@ -2591,6 +2604,7 @@ footer .foot-legal {
 }
 
 @media (hover: hover) and (pointer: fine) {
+
   .contato-chip:hover,
   .amazon-btn:hover {
     transform: translateY(-3px) scale(1.02);
