@@ -6,8 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Necropolítica e Reflexões | Taiane Almeida Santos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="assets/hero-bg.jpg" fetchpriority="high">
   <link
-    href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,800;0,900;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,800;0,900;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -74,13 +76,16 @@
         <div class="book3d-wrap" id="book3dWrap">
           <div class="book3d" id="book3d">
             <div class="book3d__face book3d__front">
-              <img src="assets/livro3d-frente.jpg" alt="Capa do livro Necropolítica e Reflexões" draggable="false">
+              <img src="assets/livro3d-frente.jpg" alt="Capa do livro Necropolítica e Reflexões" width="700"
+                height="1099" decoding="async" draggable="false">
             </div>
             <div class="book3d__face book3d__back">
-              <img src="assets/livro3d-verso.jpg" alt="Contracapa do livro Necropolítica e Reflexões" draggable="false">
+              <img src="assets/livro3d-verso.jpg" alt="Contracapa do livro Necropolítica e Reflexões" width="700"
+                height="1098" decoding="async" draggable="false">
             </div>
             <div class="book3d__face book3d__spine">
-              <img src="assets/livro3d-lombada.jpg" alt="Lombada do livro Necropolítica e Reflexões" draggable="false">
+              <img src="assets/livro3d-lombada.jpg" alt="Lombada do livro Necropolítica e Reflexões" width="33"
+                height="1141" decoding="async" draggable="false">
             </div>
             <div class="book3d__face book3d__pages" aria-hidden="true"></div>
             <div class="book3d__face book3d__top" aria-hidden="true"></div>
@@ -117,7 +122,8 @@
       </div>
       <div class="quote-photo-frame reveal from-right">
         <div class="quote-photo-inner" data-parallax="0.05">
-          <img src="assets/taiane-candid.jpg" alt="Taiane Almeida Santos">
+          <img src="assets/taiane-candid.jpg" alt="Taiane Almeida Santos" width="1100" height="825" loading="lazy"
+            decoding="async">
         </div>
       </div>
     </div>
@@ -141,7 +147,8 @@
     <canvas class="cursor-grid-canvas" aria-hidden="true"></canvas>
     <div class="container livro-grid">
       <div class="book-cover-wrap reveal from-left">
-        <img src="assets/livro-capa-contracapa.webp" alt="Capa e contracapa do livro Necropolítica e Reflexões">
+        <img src="assets/livro-capa-contracapa.webp" alt="Capa e contracapa do livro Necropolítica e Reflexões"
+          width="1000" height="1249" loading="lazy" decoding="async">
         <div class="livro-cta">
           <div class="countdown-wrap" id="countdown">
             <div class="cd-box">
@@ -191,10 +198,14 @@
           <button type="button" class="book-spread-viewport" id="spreadFrame"
             aria-label="Ampliar prévia das páginas do livro">
             <div class="book-spread-track" id="spreadTrack">
-              <img class="spread-img" src="assets/book-pages/spread-23-24.png" alt="Páginas 23–24 do livro"
-                draggable="false">
-              <img class="spread-img" src="assets/book-pages/spread-25-26.png" alt="Páginas 25–26 do livro"
-                draggable="false">
+              <img class="spread-img" src="assets/book-pages/spread-23-24-760.webp"
+                srcset="assets/book-pages/spread-23-24-760.webp 760w, assets/book-pages/spread-23-24.webp 1514w"
+                sizes="(max-width: 880px) calc(100vw - 48px), 560px" alt="Páginas 23–24 do livro" width="1514"
+                height="1039" loading="lazy" decoding="async" draggable="false">
+              <img class="spread-img" src="assets/book-pages/spread-25-26-760.webp"
+                srcset="assets/book-pages/spread-25-26-760.webp 760w, assets/book-pages/spread-25-26.webp 1514w"
+                sizes="(max-width: 880px) calc(100vw - 48px), 560px" alt="Páginas 25–26 do livro" width="1514"
+                height="1039" loading="lazy" decoding="async" draggable="false">
             </div>
             <span class="book-spread__zoom-hint" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -270,7 +281,8 @@
     <div class="container autora-grid">
       <div class="autora-photo-col reveal from-left">
         <div class="autora-photo">
-          <img src="assets/autora.jpg" alt="Taiane Almeida Santos">
+          <img src="assets/autora.jpg" alt="Taiane Almeida Santos" width="900" height="900" loading="lazy"
+            decoding="async">
         </div>
       </div>
       <div class="reveal from-right">
@@ -323,13 +335,13 @@
       </div>
       <div class="orbit" style="--rx:150px; --ry:78px;" aria-hidden="true">
         <div class="orbit-item" data-angle="0">
-          <img src="assets/orbit/livro-capa.png" alt="">
+          <img src="assets/orbit/livro-capa.webp" alt="" width="560" height="700" loading="lazy" decoding="async">
         </div>
         <div class="orbit-item" data-angle="120">
-          <img src="assets/orbit/sacola.png" alt="">
+          <img src="assets/orbit/sacola.webp" alt="" width="561" height="700" loading="lazy" decoding="async">
         </div>
         <div class="orbit-item" data-angle="240">
-          <img src="assets/orbit/marcador.png" alt="">
+          <img src="assets/orbit/marcador.webp" alt="" width="394" height="700" loading="lazy" decoding="async">
         </div>
       </div>
     </div>
@@ -453,7 +465,8 @@
   <section class="quote-section">
     <div class="container quote-photo-grid quote-photo-grid--reverse">
       <div class="quote-photo-frame reveal from-left">
-        <img src="assets/livro-mao.jpg" alt="Livro Necropolítica e Reflexões nas mãos do leitor" data-parallax="0.05">
+        <img src="assets/livro-mao.jpg" alt="Livro Necropolítica e Reflexões nas mãos do leitor" width="1200"
+          height="1213" loading="lazy" decoding="async" data-parallax="0.05">
       </div>
       <blockquote class="quote-block quote-left reveal from-right">
         [...] fazer com que ações letais sejam apresentadas como necessárias à preservação da ordem, enquanto
@@ -470,127 +483,75 @@
 
       <div class="colab-grid">
         <div class="colab-card reveal from-bottom">
-          <div class="colab-photo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-              <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                stroke-linecap="round" />
-            </svg>
+          <div class="colab-photo">
+            <img src="assets/colaboradores/carla-piaggio.webp" alt="Retrato de Carla Piaggio" width="900"
+              height="900" loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
-            <div class="colab-mini-avatar" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-                <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                  stroke-linecap="round" />
-              </svg>
-            </div>
             <div class="colab-text">
-              <div class="colab-name">Nome do(a) colaborador(a)</div>
-              <div class="colab-role">Função a definir</div>
+              <div class="colab-name">Carla Piaggio</div>
+              <div class="colab-role">diretora criativa</div>
             </div>
           </div>
         </div>
 
         <div class="colab-card reveal from-bottom">
-          <div class="colab-photo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-              <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                stroke-linecap="round" />
-            </svg>
+          <div class="colab-photo">
+            <img src="assets/colaboradores/keille-lorainne.webp" alt="Retrato de Keille Lorainne" width="900"
+              height="900" loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
-            <div class="colab-mini-avatar" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-                <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                  stroke-linecap="round" />
-              </svg>
-            </div>
             <div class="colab-text">
-              <div class="colab-name">Nome do(a) colaborador(a)</div>
-              <div class="colab-role">Função a definir</div>
+              <div class="colab-name">Keille Lorainne</div>
+              <div class="colab-role">designer e diagramadora</div>
             </div>
           </div>
         </div>
 
         <div class="colab-card reveal from-bottom">
-          <div class="colab-photo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-              <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                stroke-linecap="round" />
-            </svg>
+          <div class="colab-photo">
+            <img src="assets/colaboradores/daniele-silva.webp" alt="Retrato de Daniele Silva" width="733"
+              height="1100" loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
-            <div class="colab-mini-avatar" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-                <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                  stroke-linecap="round" />
-              </svg>
-            </div>
             <div class="colab-text">
-              <div class="colab-name">Nome do(a) colaborador(a)</div>
-              <div class="colab-role">Função a definir</div>
+              <div class="colab-name">Daniele Silva</div>
+              <div class="colab-role">capista</div>
             </div>
           </div>
         </div>
 
         <div class="colab-card reveal from-bottom">
-          <div class="colab-photo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-              <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                stroke-linecap="round" />
-            </svg>
+          <div class="colab-photo">
+            <img src="assets/colaboradores/murilo-gabriel.webp" alt="Retrato de Murilo Gabriel" width="398"
+              height="690" loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
-            <div class="colab-mini-avatar" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-                <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                  stroke-linecap="round" />
-              </svg>
-            </div>
             <div class="colab-text">
-              <div class="colab-name">Nome do(a) colaborador(a)</div>
-              <div class="colab-role">Função a definir</div>
+              <div class="colab-name">Murilo Gabriel</div>
+              <div class="colab-role">Desenvolvedor do website</div>
             </div>
           </div>
         </div>
 
         <div class="colab-card reveal from-bottom">
-          <div class="colab-photo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-              <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                stroke-linecap="round" />
-            </svg>
+          <div class="colab-photo">
+            <img src="assets/colaboradores/cicera-ramos.webp" alt="Retrato de Cicera Ramos" width="900"
+              height="1118" loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
-            <div class="colab-mini-avatar" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6" />
-                <path d="M4 20c0-3.6 3.6-6.5 8-6.5s8 2.9 8 6.5" stroke="currentColor" stroke-width="1.6"
-                  stroke-linecap="round" />
-              </svg>
-            </div>
             <div class="colab-text">
-              <div class="colab-name">Nome do(a) colaborador(a)</div>
-              <div class="colab-role">Função a definir</div>
+              <div class="colab-name">Cicera Ramos</div>
+              <div class="colab-role">Revisão textual</div>
             </div>
           </div>
         </div>
       </div>
-
-      <p class="colab-note">* Nomes, funções e fotos ainda não confirmados; assim que você me enviar, eu troco.</p>
     </div>
   </section>
 
@@ -600,12 +561,13 @@
     <div class="regua-marcas">
       <div class="regua-col">
         <span class="regua-tag">Patrocínio</span>
-        <img src="assets/logo-feira-patrocinio.png" alt="Prefeitura Municipal de Feira de Santana">
+        <img src="assets/logo-feira-patrocinio.png" alt="Prefeitura Municipal de Feira de Santana" width="600"
+          height="276" loading="lazy" decoding="async">
       </div>
       <div class="regua-divider" aria-hidden="true"></div>
       <div class="regua-col regua-col--wide">
         <span class="regua-tag">Realização</span>
-        <img src="assets/logo-realizacao-eleitoral.png"
+        <img src="assets/logo-realizacao-eleitoral.png" width="1658" height="169" loading="lazy" decoding="async"
           alt="Sistema Nacional de Cultura, Política Nacional Aldir Blanc de Fomento à Cultura e Ministério da Cultura">
       </div>
     </div>
@@ -626,7 +588,7 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
   <script type="module" src="gradient-waves.js"></script>
 </body>
 

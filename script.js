@@ -1,8 +1,5 @@
 // NAV scroll state
 const nav = document.getElementById('mainNav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 40);
-});
 
 // NAV ACTIVE SECTION — approved red indicator, isolated from page layout.
 (function () {
@@ -50,6 +47,15 @@ window.addEventListener('scroll', () => {
 
   function update() {
     const scrollY = window.scrollY || window.pageYOffset || 0;
+    const parallaxUpdates = !prefersReduced ? parallaxEls.reduce((updates, el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom < -400 || rect.top > window.innerHeight + 400) return updates;
+      const speed = parseFloat(el.dataset.parallax) || 0.15;
+      const centerOffset = (rect.top + rect.height / 2) - window.innerHeight / 2;
+      updates.push([el, -centerOffset * speed]);
+      return updates;
+    }, []) : [];
+    if (nav) nav.classList.toggle('scrolled', scrollY > 40);
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const progress = maxScroll > 0 ? Math.min(Math.max(scrollY / maxScroll, 0), 1) : 0;
     root.style.setProperty('--scroll', progress.toFixed(4));
@@ -67,12 +73,8 @@ window.addEventListener('scroll', () => {
         heroContent.style.opacity = opacity.toFixed(2);
       }
 
-      parallaxEls.forEach(el => {
-        const speed = parseFloat(el.dataset.parallax) || 0.15;
-        const rect = el.getBoundingClientRect();
-        if (rect.bottom < -400 || rect.top > window.innerHeight + 400) return;
-        const centerOffset = (rect.top + rect.height / 2) - window.innerHeight / 2;
-        el.style.transform = `translateY(${(-centerOffset * speed).toFixed(2)}px)`;
+      parallaxUpdates.forEach(([el, offset]) => {
+        el.style.transform = `translateY(${offset.toFixed(2)}px)`;
       });
     }
 
@@ -122,7 +124,7 @@ window.addEventListener('scroll', () => {
   let entryStart = null;
   const entryBaseRy = ry;
   const ENTRY_SPINS = 380;    // graus extras percorridos na entrada (pouco mais de 1 volta)
-  const ENTRY_DURATION = 3200; // ms, sincronizado com o deslize em CSS
+  const ENTRY_DURATION = window.matchMedia('(max-width: 720px)').matches ? 1800 : 3200;
 
   function apply() {
     book.style.setProperty('--ry', ry + 'deg');
@@ -190,6 +192,11 @@ window.addEventListener('scroll', () => {
   // o giro rápido de entrada roda por cima do próprio deslize.
   const wrap = document.getElementById('book3dWrap');
   const wrapStage = wrap ? wrap.closest('.sinopse-mockup') : null;
+  if (wrap) {
+    wrap.addEventListener('animationend', () => {
+      wrap.style.willChange = 'auto';
+    }, { once: true });
+  }
   if (wrap && 'IntersectionObserver' in window) {
     const entryIo = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -211,7 +218,7 @@ window.addEventListener('scroll', () => {
           }
         }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.01, rootMargin: '0px 0px 140px 0px' });
     entryIo.observe(wrapStage || wrap);
   } else if (wrap) {
     bookVisible = true;
@@ -397,14 +404,16 @@ window.addEventListener('scroll', () => {
 (function () {
   const el = document.getElementById('foldTitle');
   if (!el) return;
+  const compact = window.matchMedia('(max-width: 720px)').matches;
+  const charDelay = compact ? 0.025 : 0.045;
   el.querySelectorAll('.line1, .line2').forEach((line, lineIndex) => {
     const text = line.textContent;
     line.textContent = '';
-    const baseDelay = lineIndex * text.length * 0.045; // offset between lines
+    const baseDelay = lineIndex * text.length * charDelay;
     [...text].forEach((ch, i) => {
       const span = document.createElement('span');
       span.className = 'fold-char';
-      span.style.animationDelay = (baseDelay + i * 0.045) + 's';
+      span.style.animationDelay = (baseDelay + i * charDelay) + 's';
       span.textContent = ch === ' ' ? '\u00A0' : ch;
       line.appendChild(span);
     });
@@ -419,6 +428,7 @@ window.addEventListener('scroll', () => {
 (function () {
   const splitEls = document.querySelectorAll('.split-text:not(.livro-title)');
   if (!splitEls.length) return;
+  const compact = window.matchMedia('(max-width: 720px)').matches;
 
   // Helper: split a text string into words, create a word wrapper for each,
   // and put individual char spans inside each word wrapper.
@@ -435,7 +445,8 @@ window.addEventListener('scroll', () => {
       [...word].forEach(ch => {
         const charSpan = document.createElement('span');
         charSpan.className = 'split-char';
-        charSpan.style.transitionDelay = (charIndex * 0.025) + 's';
+        const charStagger = compact ? 0.012 : 0.02;
+        charSpan.style.transitionDelay = (charIndex * charStagger) + 's';
         charSpan.textContent = ch;
         wordSpan.appendChild(charSpan);
         charIndex++;
@@ -475,17 +486,19 @@ window.addEventListener('scroll', () => {
     }
   });
 
-  // Observe each split-text element
-  const splitObs = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('split-animated');
-        splitObs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '-80px' });
-
-  splitEls.forEach(el => splitObs.observe(el));
+  if ('IntersectionObserver' in window) {
+    const splitObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('split-animated');
+          splitObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.01, rootMargin: '0px 0px 140px 0px' });
+    splitEls.forEach(el => splitObs.observe(el));
+  } else {
+    splitEls.forEach(el => el.classList.add('split-animated'));
+  }
 })();
 
 // ROTATING TEXT: cycle through words with spring-like vertical transition
@@ -514,7 +527,23 @@ window.addEventListener('scroll', () => {
     }, 500);
   }
 
-  setInterval(rotate, INTERVAL);
+  let timer = 0;
+  let visible = true;
+  const schedule = () => {
+    clearTimeout(timer);
+    if (visible && !document.hidden) timer = window.setTimeout(() => {
+      rotate();
+      schedule();
+    }, INTERVAL);
+  };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      schedule();
+    }, { rootMargin: '120px 0px' }).observe(container);
+  }
+  document.addEventListener('visibilitychange', schedule);
+  schedule();
 })();
 
 // O LIVRO — timeline editorial, acionada progressivamente pelo viewport.
@@ -579,19 +608,19 @@ window.addEventListener('scroll', () => {
     section.classList.add('livro-intro-active');
     title.classList.add('is-lines-visible');
     introObserver.disconnect();
-  }, { threshold: 0.08, rootMargin: '0px 0px -12% 0px' });
+  }, { threshold: 0.01, rootMargin: '0px 0px 160px 0px' });
 
   const secondaryObserver = new IntersectionObserver(([entry]) => {
     if (!entry.isIntersecting) return;
     section.classList.add('livro-secondary-active');
     secondaryObserver.disconnect();
-  }, { threshold: 0.2, rootMargin: '-30% 0px -12% 0px' });
+  }, { threshold: 0.01, rootMargin: '0px 0px 80px 0px' });
 
   const spreadObserver = new IntersectionObserver(([entry]) => {
     if (!entry.isIntersecting) return;
     section.classList.add('livro-spread-active');
     spreadObserver.disconnect();
-  }, { threshold: 0.22, rootMargin: '0px 0px -8% 0px' });
+  }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
 
   introObserver.observe(section);
   const countdown = section.querySelector('#countdown');
@@ -605,20 +634,23 @@ window.addEventListener('scroll', () => {
 // REVEAL ON SCROLL
 const revealEls = Array.from(document.querySelectorAll('.reveal'))
   .filter(el => !el.closest('.livro'));
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
       const el = entry.target;
       io.unobserve(el);
       const group = el.closest('.colab-grid');
-      // Cards de colaboradores entram em cascata (um depois do outro);
-      // o restante do site mantém o atraso fixo de sempre.
-      const stagger = group ? Array.from(group.children).indexOf(el) * 120 : 0;
-      setTimeout(() => el.classList.add('in-view'), 250 + stagger);
-    }
-  });
-}, { threshold: 0.35 });
-revealEls.forEach(el => io.observe(el));
+      const staggerStep = window.matchMedia('(max-width: 720px)').matches ? 65 : 90;
+      const stagger = group ? Array.from(group.children).indexOf(el) * staggerStep : 0;
+      el.style.setProperty('--reveal-delay', `${stagger}ms`);
+      el.classList.add('in-view');
+    });
+  }, { threshold: 0.01, rootMargin: '0px 0px 160px 0px' });
+  revealEls.forEach(el => io.observe(el));
+} else {
+  revealEls.forEach(el => el.classList.add('in-view'));
+}
 
 // COLABORADORES — tilt 3D que segue o cursor (só em telas com mouse)
 (function () {
@@ -679,13 +711,20 @@ if (depTrack) {
       lastY = null;
     }
   }, { passive: true });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      depTrack.classList.toggle('offscreen', !entry.isIntersecting);
+    }, { rootMargin: '160px 0px' }).observe(depTrack);
+  }
 }
 
 // TIMELINE "ALÉM DO LIVRO" — escalona os itens e cresce a linha ao entrar na tela
 const pubList = document.querySelector('.pub-list');
 if (pubList) {
   const pubItems = pubList.querySelectorAll('.pub-item');
-  const stagger = 0.35; // segundos entre o início de um trabalho e o próximo
+  const compact = window.matchMedia('(max-width: 720px)').matches;
+  const stagger = compact ? 0.07 : 0.12;
   pubItems.forEach((item, i) => {
     const base = i * stagger;
     // só o fade (3ª posição na lista de transition do .pub-item) ganha o atraso;
@@ -698,18 +737,22 @@ if (pubList) {
     // dentro de cada item, tag -> título -> descrição -> link aparecem em sequência
     const partes = item.querySelectorAll('.pub-tag, .pub-title, .pub-desc, .pub-link');
     partes.forEach((parte, j) => {
-      parte.style.transitionDelay = (base + 0.18 + j * 0.16) + 's';
+      parte.style.transitionDelay = (base + 0.06 + j * (compact ? 0.05 : 0.07)) + 's';
     });
   });
-  const pubIo = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        pubList.classList.add('in-view');
-        pubIo.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-  pubIo.observe(pubList);
+  if ('IntersectionObserver' in window) {
+    const pubIo = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          pubList.classList.add('in-view');
+          pubIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.01, rootMargin: '0px 0px 180px 0px' });
+    pubIo.observe(pubList);
+  } else {
+    pubList.classList.add('in-view');
+  }
 }
 
 // COUNTDOWN: lançamento em 11/09
@@ -768,8 +811,8 @@ setInterval(updateCountdown, 60000);
 
   // spreads fotografados do miolo do livro
   const spreads = [
-    { src: 'assets/book-pages/spread-23-24.png', label: 'Pág. 23–24', alt: 'Páginas 23–24 do livro' },
-    { src: 'assets/book-pages/spread-25-26.png', label: 'Pág. 25–26', alt: 'Páginas 25–26 do livro' }
+    { src: 'assets/book-pages/spread-23-24.webp', label: 'Pág. 23–24', alt: 'Páginas 23–24 do livro' },
+    { src: 'assets/book-pages/spread-25-26.webp', label: 'Pág. 25–26', alt: 'Páginas 25–26 do livro' }
   ];
   let current = 0;
 

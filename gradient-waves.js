@@ -8,8 +8,6 @@
  * attached to a single container element (#autoraGradientWaves).
  */
 
-import { Renderer, Program, Mesh, Triangle } from 'https://esm.sh/ogl@1.0.6';
-
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result) return [1, 1, 1];
@@ -21,7 +19,7 @@ function hexToRgb(hex) {
 }
 
 function detailToSteps(detail) {
-  if (detail === 'low') return 40.0;
+  if (detail === 'low') return 32.0;
   if (detail === 'high') return 110.0;
   return 70.0;
 }
@@ -142,7 +140,8 @@ void main() {
  * Mounts the GradientWaves effect inside `container`.
  * `options` mirrors the props of the original React component.
  */
-function mountGradientWaves(container, options = {}) {
+function mountGradientWaves(container, ogl, options = {}) {
+  const { Renderer, Program, Mesh, Triangle } = ogl;
   const opts = Object.assign(
     {
       horizonColor: '#e8e0d1',
@@ -164,7 +163,8 @@ function mountGradientWaves(container, options = {}) {
       mouseInteraction: true,
       parallaxStrength: 0.3,
       grain: true,
-      grainIntensity: 0.025
+      grainIntensity: 0.025,
+      frameInterval: 0
     },
     options
   );
@@ -267,9 +267,13 @@ function mountGradientWaves(container, options = {}) {
   let raf = 0;
   let isVisible = true;
   let isPageVisible = !document.hidden;
+  let lastRender = 0;
   const t0 = performance.now();
 
   const loop = t => {
+    raf = requestAnimationFrame(loop);
+    if (opts.frameInterval && t - lastRender < opts.frameInterval) return;
+    lastRender = t;
     program.uniforms.iTime.value = (t - t0) * 0.001;
     const tx = opts.mouseInteraction ? targetMouse[0] : 0.5;
     const ty = opts.mouseInteraction ? targetMouse[1] : 0.5;
@@ -278,7 +282,6 @@ function mountGradientWaves(container, options = {}) {
     program.uniforms.uMouse.value[0] = currentMouse[0];
     program.uniforms.uMouse.value[1] = currentMouse[1];
     renderer.render({ scene: mesh });
-    raf = requestAnimationFrame(loop);
   };
 
   const tryStart = () => {
@@ -319,7 +322,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const compact = window.innerWidth < 768;
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  mountGradientWaves(container, {
+  let initialized = false;
+  const initialize = async () => {
+    if (initialized) return;
+    initialized = true;
+    try {
+      const ogl = await import('https://esm.sh/ogl@1.0.6');
+      mountGradientWaves(container, ogl, {
     // Soft, editorial palette matched to the site's cream/off-white tones.
     horizonColor: '#e8e0d1',
     waveColor: '#f3ede1',
@@ -340,6 +349,22 @@ document.addEventListener('DOMContentLoaded', () => {
     mouseInteraction: finePointer,
     parallaxStrength: finePointer ? 0.3 : 0,
     grain: true,
-    grainIntensity: 0.025
-  });
+    grainIntensity: 0.025,
+    frameInterval: compact ? 32 : 0
+      });
+    } catch (error) {
+      // O fundo WebGL é decorativo; o conteúdo permanece disponível se a CDN falhar.
+    }
+  };
+
+  if ('IntersectionObserver' in window) {
+    const preloadObserver = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      preloadObserver.disconnect();
+      initialize();
+    }, { rootMargin: '1000px 0px' });
+    preloadObserver.observe(container);
+  } else {
+    initialize();
+  }
 });
