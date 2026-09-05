@@ -4,6 +4,29 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 });
 
+// NAV ACTIVE SECTION — approved red indicator, isolated from page layout.
+(function () {
+  const links = Array.from(document.querySelectorAll('#mainNav .nav-links a[href^="#"]'));
+  const targets = links
+    .map(link => ({ link, section: document.querySelector(link.getAttribute('href')) }))
+    .filter(item => item.section);
+  if (!targets.length || !('IntersectionObserver' in window)) return;
+
+  const activeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      targets.forEach(({ link, section }) => {
+        const active = section === entry.target;
+        link.classList.toggle('active', active);
+        if (active) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    });
+  }, { rootMargin: '-38% 0px -53% 0px' });
+
+  targets.forEach(({ section }) => activeObserver.observe(section));
+})();
+
 // SCROLL PROGRESS + PARALLAX + AMBIENT GLOW & INERTIAL SMOOTH SCROLL
 (function () {
   const root = document.documentElement;
@@ -93,6 +116,9 @@ window.addEventListener('scroll', () => {
   // ele gira rápido algumas voltas e desacelera suavemente até o giro lento normal.
   let rotationActive = false;
   let entering = false;
+  let bookVisible = false;
+  let hasEntered = false;
+  let bookRaf = 0;
   let entryStart = null;
   const entryBaseRy = ry;
   const ENTRY_SPINS = 380;    // graus extras percorridos na entrada (pouco mais de 1 volta)
@@ -128,7 +154,7 @@ window.addEventListener('scroll', () => {
       lastTs = ts;
     }
     apply();
-    requestAnimationFrame(frame);
+    bookRaf = (bookVisible || dragging || entering) ? requestAnimationFrame(frame) : 0;
   }
 
   book.addEventListener('pointerdown', (e) => {
@@ -139,6 +165,7 @@ window.addEventListener('scroll', () => {
     startRy = ry;
     startRx = rx;
     book.setPointerCapture(e.pointerId);
+    if (!prefersReduced && !bookRaf) bookRaf = requestAnimationFrame(frame);
   });
 
   book.addEventListener('pointermove', (e) => {
@@ -157,7 +184,6 @@ window.addEventListener('scroll', () => {
   book.addEventListener('pointercancel', stopDrag);
 
   apply();
-  requestAnimationFrame(frame);
 
   // Dispara a entrada (fade + deslize com "estouro" suave, controlados via CSS
   // em .book3d-wrap) assim que a seção aparece na tela. O livro já chega girando:
@@ -167,22 +193,31 @@ window.addEventListener('scroll', () => {
   if (wrap && 'IntersectionObserver' in window) {
     const entryIo = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
+        bookVisible = entry.isIntersecting;
         if (entry.isIntersecting) {
-          wrap.classList.add('is-visible');
-          if (!prefersReduced) {
-            entering = true;
-            entryStart = null;
-          } else {
-            rotationActive = true;
+          if (!hasEntered) {
+            hasEntered = true;
+            wrap.classList.add('is-visible');
+            if (!prefersReduced) {
+              entering = true;
+              entryStart = null;
+            } else {
+              rotationActive = true;
+            }
           }
-          entryIo.unobserve(entry.target);
+          if (!prefersReduced && !bookRaf) {
+            lastTs = null;
+            bookRaf = requestAnimationFrame(frame);
+          }
         }
       });
     }, { threshold: 0.15 });
     entryIo.observe(wrapStage || wrap);
   } else if (wrap) {
+    bookVisible = true;
     wrap.classList.add('is-visible');
     rotationActive = !prefersReduced;
+    if (!prefersReduced) bookRaf = requestAnimationFrame(frame);
   }
 })();
 
@@ -200,7 +235,6 @@ window.addEventListener('scroll', () => {
   const DURATION = 16000; // ms por volta completa a velocidade normal
   const TWO_PI = Math.PI * 2;
   const OMEGA = TWO_PI / DURATION; // rad/ms em velocidade normal
-  const SEEK_DURATION = 950; // ms para trazer o item para frente ao passar o mouse (mais devagar)
   const HIGHLIGHT_SCALE = 1.28; // quanto o item em destaque cresce
   const EASE = 0.14; // suavização do crescimento/encolhimento (mais fluido)
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -243,45 +277,34 @@ window.addEventListener('scroll', () => {
 
   measure();
 
-  // ---- Estado da rotação: 'normal' | 'seeking' | 'paused'
+  // Estado da rotação: desacelera de forma contínua durante a interação.
   let mode = 'normal';
   let angleOffset = 0;
-  let seekFrom = 0, seekTo = 0, seekElapsed = 0;
   let hovered = null;
-
-  function angleOfItem(item) {
-    // ângulo (mod 2π) em que o item fica exatamente na frente (depth máximo)
-    return Math.PI / 2 - item.angle;
-  }
-
-  function shortestForwardDelta(from, to) {
-    return ((to - from) % TWO_PI + TWO_PI) % TWO_PI;
-  }
+  let speedScale = 1;
+  let speedTarget = 1;
 
   function startSeek(item) {
     hovered = item;
-    const target = angleOfItem(item);
-    const delta = shortestForwardDelta(angleOffset, target);
-
-    if (delta < 0.03 || delta > TWO_PI - 0.03) {
-      // já está praticamente na frente: só pausa e destaca
-      angleOffset = target;
-      mode = 'paused';
-      items.forEach(it => { it.extraTarget = it === item ? 1 : 0; });
-    } else {
-      seekFrom = angleOffset;
-      seekTo = angleOffset + delta;
-      seekElapsed = 0;
-      mode = 'seeking';
-      // o crescimento só começa quando o item chegar na frente (ver tick())
-      items.forEach(it => { it.extraTarget = 0; });
-    }
+    mode = 'hovering';
+    speedTarget = 0.06;
+    orbit.classList.add('is-interacting');
+    items.forEach(it => {
+      const active = it === item;
+      it.extraTarget = active ? 1 : 0;
+      it.el.classList.toggle('is-orbit-active', active);
+    });
   }
 
   function clearHover() {
     hovered = null;
     mode = prefersReduced ? 'paused-static' : 'normal';
-    items.forEach(it => { it.extraTarget = 0; });
+    speedTarget = prefersReduced ? 0 : 1;
+    orbit.classList.remove('is-interacting');
+    items.forEach(it => {
+      it.extraTarget = 0;
+      it.el.classList.remove('is-orbit-active');
+    });
   }
 
   items.forEach(item => {
@@ -293,39 +316,55 @@ window.addEventListener('scroll', () => {
     item.el.addEventListener('blur', () => {
       if (hovered === item) clearHover();
     });
+    item.el.addEventListener('pointerdown', (event) => {
+      if (event.pointerType !== 'mouse') startSeek(item);
+    });
+    item.el.addEventListener('pointerup', (event) => {
+      if (event.pointerType !== 'mouse' && hovered === item) clearHover();
+    });
+    item.el.addEventListener('pointercancel', () => {
+      if (hovered === item) clearHover();
+    });
   });
 
   if (prefersReduced) {
     render(0, 16);
   } else {
-    let raf;
+    let raf = 0;
     let last = performance.now();
+    let isVisible = false;
 
     function tick(now) {
+      if (!isVisible) {
+        raf = 0;
+        return;
+      }
       const dt = Math.min(now - last, 48); // evita saltos após aba inativa
       last = now;
 
-      if (mode === 'normal') {
-        angleOffset = (angleOffset + OMEGA * dt) % TWO_PI;
-      } else if (mode === 'seeking') {
-        seekElapsed += dt;
-        const t = Math.min(1, seekElapsed / SEEK_DURATION);
-        // ease-in-out: acelera suavemente e desacelera suavemente ao chegar na frente
-        const eased = t < 0.5
-          ? 4 * t * t * t
-          : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        angleOffset = (seekFrom + (seekTo - seekFrom) * eased) % TWO_PI;
-        if (t >= 1) {
-          mode = 'paused';
-          if (hovered) hovered.extraTarget = 1; // só cresce depois de chegar na frente
-        }
+      speedScale += (speedTarget - speedScale) * Math.min(1, dt * 0.008);
+
+      if (mode === 'normal' || mode === 'hovering') {
+        angleOffset = (angleOffset + OMEGA * dt * speedScale) % TWO_PI;
       }
-      // 'paused': angleOffset congelado, só o crescimento do item continua animando
 
       render(angleOffset, dt);
       raf = requestAnimationFrame(tick);
     }
-    raf = requestAnimationFrame(tick);
+
+    if ('IntersectionObserver' in window) {
+      const orbitObserver = new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && !raf) {
+          last = performance.now();
+          raf = requestAnimationFrame(tick);
+        }
+      }, { rootMargin: '160px 0px', threshold: 0 });
+      orbitObserver.observe(orbit);
+    } else {
+      isVisible = true;
+      raf = requestAnimationFrame(tick);
+    }
   }
 
   const ro = new ResizeObserver(measure);
@@ -378,7 +417,7 @@ window.addEventListener('scroll', () => {
 // SPLIT TEXT: split section titles into individual chars, animate on scroll
 // Uses word-level grouping so line breaks only happen between words, never mid-word.
 (function () {
-  const splitEls = document.querySelectorAll('.split-text');
+  const splitEls = document.querySelectorAll('.split-text:not(.livro-title)');
   if (!splitEls.length) return;
 
   // Helper: split a text string into words, create a word wrapper for each,
@@ -478,8 +517,94 @@ window.addEventListener('scroll', () => {
   setInterval(rotate, INTERVAL);
 })();
 
+// O LIVRO — timeline editorial, acionada progressivamente pelo viewport.
+// O estado final não altera o layout; apenas opacity/transform/clip-path são animados.
+(function () {
+  const section = document.getElementById('livro');
+  const title = section && section.querySelector('.livro-title');
+  if (!section || !title) return;
+
+  const prefersReduced = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let hasPlayed = false;
+  function buildEditorialLines() {
+    const lines = [
+      [{ text: 'NECROPOLÍTICA ' }, { text: 'E', red: true }],
+      [{ text: 'REFLEXÕES', red: true }, { text: ' ACERCA DA' }],
+      [{ text: 'POPULAÇÃO NEGRA NO' }],
+      [{ text: 'TERRITÓRIO BAIANO' }]
+    ];
+    const fragment = document.createDocumentFragment();
+    lines.forEach((line, lineIndex) => {
+      const mask = document.createElement('span');
+      mask.className = 'livro-title-line';
+      const inner = document.createElement('span');
+      inner.className = 'livro-title-line__inner';
+      inner.style.setProperty('--livro-line', lineIndex);
+      line.forEach(part => {
+        if (part.red) {
+          const accent = document.createElement('span');
+          accent.className = 'red';
+          accent.textContent = part.text;
+          inner.appendChild(accent);
+        } else {
+          inner.appendChild(document.createTextNode(part.text));
+        }
+      });
+      mask.appendChild(inner);
+      fragment.appendChild(mask);
+      if (lineIndex < lines.length - 1) fragment.appendChild(document.createTextNode('\n'));
+    });
+    title.replaceChildren(fragment);
+    title.style.setProperty('--livro-lines', lines.length);
+    section.style.setProperty('--livro-lines', lines.length);
+    if (hasPlayed || prefersReduced) title.classList.add('is-lines-visible');
+  }
+
+  buildEditorialLines();
+
+  if (prefersReduced || !('IntersectionObserver' in window)) {
+    section.classList.add('livro-entrance-ready', 'livro-intro-active',
+      'livro-secondary-active', 'livro-spread-active');
+    title.classList.add('is-lines-visible');
+    return;
+  }
+
+  section.classList.add('livro-entrance-ready');
+
+  const introObserver = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    hasPlayed = true;
+    section.classList.add('livro-intro-active');
+    title.classList.add('is-lines-visible');
+    introObserver.disconnect();
+  }, { threshold: 0.08, rootMargin: '0px 0px -12% 0px' });
+
+  const secondaryObserver = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    section.classList.add('livro-secondary-active');
+    secondaryObserver.disconnect();
+  }, { threshold: 0.2, rootMargin: '-30% 0px -12% 0px' });
+
+  const spreadObserver = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    section.classList.add('livro-spread-active');
+    spreadObserver.disconnect();
+  }, { threshold: 0.22, rootMargin: '0px 0px -8% 0px' });
+
+  introObserver.observe(section);
+  const countdown = section.querySelector('#countdown');
+  const spread = section.querySelector('#bookSpread');
+  if (countdown) secondaryObserver.observe(countdown);
+  else section.classList.add('livro-secondary-active');
+  if (spread) spreadObserver.observe(spread);
+  else section.classList.add('livro-spread-active');
+})();
+
 // REVEAL ON SCROLL
-const revealEls = document.querySelectorAll('.reveal');
+const revealEls = Array.from(document.querySelectorAll('.reveal'))
+  .filter(el => !el.closest('.livro'));
 const io = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -604,16 +729,20 @@ setInterval(updateCountdown, 60000);
 // CLICK SPARK
 (function () {
   const canvas = document.getElementById('sparkCanvas');
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!canvas || prefersReduced) return;
   const ctx = canvas.getContext('2d');
   function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   resize(); window.addEventListener('resize', resize);
   let sparks = [];
+  let raf = 0;
   const sparkColor = '#c81f1f', sparkCount = 8, sparkSize = 10, sparkRadius = 22, duration = 450;
   window.addEventListener('click', (e) => {
     const now = performance.now();
     for (let i = 0; i < sparkCount; i++) {
       sparks.push({ x: e.clientX, y: e.clientY, angle: (2 * Math.PI * i) / sparkCount, start: now });
     }
+    if (!raf) raf = requestAnimationFrame(draw);
   });
   function draw(ts) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -628,9 +757,8 @@ setInterval(updateCountdown, 60000);
       ctx.strokeStyle = sparkColor; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     });
-    requestAnimationFrame(draw);
+    raf = sparks.length ? requestAnimationFrame(draw) : 0;
   }
-  requestAnimationFrame(draw);
 })();
 
 // BOOK SPREAD — páginas abertas lado a lado (fotos reais), com lightbox de zoom

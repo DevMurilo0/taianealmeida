@@ -180,7 +180,7 @@ function mountGradientWaves(container, options = {}) {
       alpha: true,
       premultipliedAlpha: true,
       antialias: false,
-      dpr: Math.min(window.devicePixelRatio || 1, 2)
+      dpr: window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 2)
     });
   } catch (e) {
     // WebGL2 unavailable — silently skip the decorative effect.
@@ -316,6 +316,8 @@ function mountGradientWaves(container, options = {}) {
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('autoraGradientWaves');
   if (!container) return;
+  const compact = window.innerWidth < 768;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   mountGradientWaves(container, {
     // Soft, editorial palette matched to the site's cream/off-white tones.
@@ -332,11 +334,11 @@ document.addEventListener('DOMContentLoaded', () => {
     zoom: 1.0,
     height: 5.5,
     fogDepth: 13,
-    detail: 'medium',
+    detail: compact ? 'low' : 'medium',
     brightness: 1.0,
     opacity: 0.55,
-    mouseInteraction: true,
-    parallaxStrength: 0.3,
+    mouseInteraction: finePointer,
+    parallaxStrength: finePointer ? 0.3 : 0,
     grain: true,
     grainIntensity: 0.025
   });
