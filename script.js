@@ -804,6 +804,70 @@ setInterval(updateCountdown, 60000);
   }
 })();
 
+// Livro CTA — mantém o botão do Spotify preparado até que a URL oficial seja definida.
+(function () {
+  const spotifyBtn = document.getElementById('spotifyBtn');
+  if (!spotifyBtn) return;
+  const url = spotifyBtn.dataset.spotifyUrl?.trim();
+  if (url) {
+    spotifyBtn.removeAttribute('aria-disabled');
+    spotifyBtn.addEventListener('click', () => window.open(url, '_blank', 'noopener,noreferrer'));
+    return;
+  }
+  spotifyBtn.addEventListener('click', (event) => event.preventDefault());
+})();
+
+// Player customizado do trecho do audiobook. O áudio é opcional até o arquivo real ser adicionado.
+(function () {
+  const player = document.getElementById('audiobookPlayer');
+  const audio = document.getElementById('audiobookAudio');
+  const play = document.getElementById('audioPlay');
+  const progress = document.getElementById('audioProgress');
+  const current = document.getElementById('audioCurrent');
+  const duration = document.getElementById('audioDuration');
+  if (!player || !audio || !play || !progress || !current || !duration) return;
+
+  const formatTime = (value) => {
+    if (!Number.isFinite(value) || value < 0) return '--:--';
+    const minutes = Math.floor(value / 60).toString().padStart(2, '0');
+    const seconds = Math.floor(value % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  };
+  const updateProgress = () => {
+    const ratio = Number.isFinite(audio.duration) && audio.duration > 0 ? (audio.currentTime / audio.duration) * 100 : 0;
+    progress.value = ratio;
+    current.textContent = formatTime(audio.currentTime);
+  };
+  const setPlaying = (isPlaying) => {
+    player.classList.toggle('is-playing', isPlaying);
+    play.setAttribute('aria-label', isPlaying ? 'Pausar trecho do audiobook' : 'Reproduzir trecho do audiobook');
+  };
+  const enable = () => {
+    play.disabled = false;
+    progress.disabled = false;
+    duration.textContent = formatTime(audio.duration);
+    updateProgress();
+  };
+
+  // Sem src, o componente permanece visível e seguro, aguardando o arquivo real.
+  if (audio.getAttribute('src')) {
+    audio.addEventListener('loadedmetadata', enable, { once: true });
+    audio.addEventListener('durationchange', enable);
+  }
+  play.addEventListener('click', () => {
+    if (!audio.src) return;
+    if (audio.paused) audio.play().catch(() => setPlaying(false));
+    else audio.pause();
+  });
+  progress.addEventListener('input', () => {
+    if (Number.isFinite(audio.duration) && audio.duration > 0) audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+  });
+  audio.addEventListener('timeupdate', updateProgress);
+  audio.addEventListener('play', () => setPlaying(true));
+  audio.addEventListener('pause', () => setPlaying(false));
+  audio.addEventListener('ended', () => { setPlaying(false); updateProgress(); });
+})();
+
 // BOOK SPREAD — páginas abertas lado a lado (fotos reais), com lightbox de zoom
 (function () {
   const wrap = document.getElementById('bookSpread');

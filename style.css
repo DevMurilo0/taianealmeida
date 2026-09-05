@@ -1430,6 +1430,56 @@ section {
   margin-top: 6px;
 }
 
+.livro-cta .spotify-btn {
+  margin-top: 10px;
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid rgba(255, 255, 255, .24);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.livro-cta .amazon-btn {
+  transition: transform .4s cubic-bezier(.16, 1, .3, 1),
+    background-color .35s cubic-bezier(.22, 1, .36, 1),
+    color .35s cubic-bezier(.22, 1, .36, 1),
+    border-color .35s cubic-bezier(.22, 1, .36, 1);
+}
+
+.spotify-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+.spotify-btn[aria-disabled="true"] { cursor: not-allowed; opacity: .72; }
+
+@media (hover: hover) and (pointer: fine) {
+  .livro-cta .amazon-btn:not(.spotify-btn):hover,
+  .livro-cta .amazon-btn:not(.spotify-btn):focus-visible {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: var(--white);
+    outline: none;
+  }
+
+  .livro-cta .spotify-btn:hover,
+  .livro-cta .spotify-btn:focus-visible {
+    background: #1ed760;
+    border-color: #1ed760;
+    color: #071b10;
+    outline: none;
+  }
+}
+
+.livro-cta .amazon-btn:not(.spotify-btn):active {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: var(--white);
+}
+
+.livro-cta .spotify-btn:active {
+  background: #169c46;
+  border-color: #169c46;
+  color: var(--white);
+}
+
 .livro-newsletter {
   margin-top: 34px;
   padding-top: 28px;
@@ -1719,7 +1769,10 @@ section {
 .book-flip__controls {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 18px;
+  transform: translateX(-50px);
 }
 
 .flip-btn {
@@ -1760,6 +1813,45 @@ section {
   border-color: rgba(255, 255, 255, .18);
 }
 
+/* Compact audiobook excerpt, kept within the page-preview component. */
+.audiobook-player {
+  width: min(100%, 560px);
+  padding: 16px 18px 17px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .035);
+  color: var(--cream);
+}
+
+.audiobook-player__eyebrow {
+  margin-bottom: 11px;
+  color: var(--gray);
+  font: 600 10px/1.2 'Inter', sans-serif;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.audiobook-player__main { display: flex; align-items: center; gap: 14px; }
+.audiobook-player__play {
+  width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .3); background: var(--white); color: var(--black);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: transform .3s cubic-bezier(.16, 1, .3, 1), background .3s ease, color .3s ease;
+}
+.audiobook-player__play:hover:not(:disabled), .audiobook-player__play:focus-visible:not(:disabled) { transform: scale(1.05); background: var(--red); color: var(--white); outline: none; }
+.audiobook-player__play:disabled { opacity: .45; cursor: not-allowed; }
+.audio-icon { width: 19px; height: 19px; }
+.audio-icon--pause { display: none; }
+.audiobook-player.is-playing .audio-icon--play { display: none; }
+.audiobook-player.is-playing .audio-icon--pause { display: block; }
+.audiobook-player__body { min-width: 0; flex: 1; }
+.audiobook-player__title { margin-bottom: 9px; font: 600 13px/1.3 'Inter', sans-serif; letter-spacing: .01em; }
+.audiobook-player__progress-row { display: flex; align-items: center; gap: 11px; }
+.audiobook-player__progress { min-width: 0; flex: 1; height: 4px; accent-color: var(--red); cursor: pointer; }
+.audiobook-player__progress:disabled { opacity: .45; cursor: not-allowed; }
+.audiobook-player__times { display: flex; gap: 6px; color: var(--gray); font: 10px/1 'Inter', sans-serif; white-space: nowrap; }
+.audiobook-player__times span + span::before { content: '/'; margin-right: 6px; color: rgba(255,255,255,.35); }
+
 .flip-indicator {
   font-size: 12px;
   letter-spacing: .12em;
@@ -1773,6 +1865,15 @@ section {
   .book-spread-viewport {
     width: min(88vw, 380px);
   }
+
+  .audiobook-player {
+    width: min(88vw, 380px);
+    padding: 14px 14px 15px;
+  }
+
+  .audiobook-player__main { gap: 11px; }
+  .audiobook-player__play { width: 38px; height: 38px; flex-basis: 38px; }
+  .audiobook-player__title { font-size: 12px; }
 
   .book-spread-track {
     gap: 14px;
@@ -2984,10 +3085,12 @@ footer .foot-legal {
 .livro-entrance-ready .cd-box,
 .livro-entrance-ready .cd-caption,
 .livro-entrance-ready .amazon-btn,
+.livro-entrance-ready .spotify-btn,
 .livro-entrance-ready .livro-newsletter,
 .livro-entrance-ready .livro-newsletter .ln-caption,
 .livro-entrance-ready .livro-newsletter .nl-form,
 .livro-entrance-ready .book-spread-viewport,
+.livro-entrance-ready .audiobook-player,
 .livro-entrance-ready .book-flip__controls > * {
   opacity: 0;
 }
@@ -3050,6 +3153,7 @@ footer .foot-legal {
 .livro-entrance-ready .cd-box,
 .livro-entrance-ready .cd-caption,
 .livro-entrance-ready .amazon-btn,
+.livro-entrance-ready .spotify-btn,
 .livro-entrance-ready .livro-newsletter {
   transform: translate3d(0, 24px, 0);
   transition: opacity .78s cubic-bezier(.16, 1, .3, 1),
@@ -3063,6 +3167,7 @@ footer .foot-legal {
 .livro-entrance-ready .cd-caption { transition-delay: .3s; }
 .livro-entrance-ready .amazon-btn { transition-delay: .44s; }
 .livro-entrance-ready .livro-newsletter { transition-delay: .58s; }
+.livro-entrance-ready .spotify-btn { transition-delay: .58s; }
 
 .livro-entrance-ready .livro-newsletter .ln-caption,
 .livro-entrance-ready .livro-newsletter .nl-form {
@@ -3077,6 +3182,7 @@ footer .foot-legal {
 .livro-secondary-active .cd-box,
 .livro-secondary-active .cd-caption,
 .livro-secondary-active .amazon-btn,
+.livro-secondary-active .spotify-btn,
 .livro-secondary-active .livro-newsletter,
 .livro-secondary-active .livro-newsletter .ln-caption,
 .livro-secondary-active .livro-newsletter .nl-form {
@@ -3093,6 +3199,13 @@ footer .foot-legal {
     filter .3s ease;
 }
 
+.livro-entrance-ready .audiobook-player {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition: opacity .82s cubic-bezier(.16, 1, .3, 1), transform .92s cubic-bezier(.16, 1, .3, 1);
+  transition-delay: .38s;
+}
+
 .livro-entrance-ready .book-flip__controls > * {
   transform: translate3d(0, 18px, 0);
   transition: opacity .72s cubic-bezier(.16, 1, .3, 1),
@@ -3104,6 +3217,7 @@ footer .foot-legal {
 .livro-entrance-ready .book-flip__controls > :nth-child(3) { transition-delay: .32s; }
 
 .livro-spread-active .book-spread-viewport,
+.livro-spread-active .audiobook-player,
 .livro-spread-active .book-flip__controls > * {
   opacity: 1;
   clip-path: inset(0);
@@ -3146,9 +3260,11 @@ footer .foot-legal {
   .livro-entrance-ready .cd-box:nth-child(2) { transition-delay: .08s; }
   .livro-entrance-ready .cd-caption { transition-delay: .14s; }
   .livro-entrance-ready .amazon-btn { transition-delay: .22s; }
+  .livro-entrance-ready .spotify-btn { transition-delay: .30s; }
   .livro-entrance-ready .livro-newsletter { transition-delay: .30s; }
   .livro-entrance-ready .livro-newsletter .ln-caption { transition-delay: .38s; }
   .livro-entrance-ready .livro-newsletter .nl-form { transition-delay: .46s; }
+  .livro-entrance-ready .audiobook-player { transition-duration: .74s; transition-delay: .34s; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3160,10 +3276,12 @@ footer .foot-legal {
   .livro-entrance-ready .cd-box,
   .livro-entrance-ready .cd-caption,
   .livro-entrance-ready .amazon-btn,
+  .livro-entrance-ready .spotify-btn,
   .livro-entrance-ready .livro-newsletter,
   .livro-entrance-ready .livro-newsletter .ln-caption,
   .livro-entrance-ready .livro-newsletter .nl-form,
   .livro-entrance-ready .book-spread-viewport,
+  .livro-entrance-ready .audiobook-player,
   .livro-entrance-ready .book-flip__controls > *,
   .livro-entrance-ready > .cursor-grid-canvas {
     opacity: 1;

@@ -172,6 +172,15 @@
             </svg>
             Comprar na Amazon
           </a>
+          <!-- TODO: inserir aqui o link oficial do audiobook completo no Spotify. -->
+          <button type="button" class="amazon-btn spotify-btn" id="spotifyBtn" data-spotify-url=""
+            aria-label="Ouvir audiobook completo no Spotify" aria-disabled="true">
+            <svg class="spotify-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+              <path d="M7.8 10.2c2.9-.8 5.9-.5 8.4.7M8.4 13c2.4-.6 4.8-.3 6.9.7M9.1 15.6c1.8-.4 3.6-.2 5.2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            Ouvir no Spotify
+          </button>
 
           <div class="livro-newsletter">
             <p class="ln-caption">Seja avisado(a) do lançamento e para outras novidades</p>
@@ -229,6 +238,24 @@
                   stroke-linejoin="round" />
               </svg>
             </button>
+          </div>
+          <div class="audiobook-player" id="audiobookPlayer">
+            <div class="audiobook-player__eyebrow">Trecho do audiobook</div>
+            <div class="audiobook-player__main">
+              <button type="button" class="audiobook-player__play" id="audioPlay" aria-label="Reproduzir trecho do audiobook" disabled>
+                <svg class="audio-icon audio-icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7.2v9.6L17 12 9 7.2Z" fill="currentColor" /></svg>
+                <svg class="audio-icon audio-icon--pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7v10M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+              </button>
+              <div class="audiobook-player__body">
+                <div class="audiobook-player__title">Ouça um trecho da obra</div>
+                <div class="audiobook-player__progress-row">
+                  <input id="audioProgress" class="audiobook-player__progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Progresso do trecho do audiobook" disabled>
+                  <div class="audiobook-player__times"><span id="audioCurrent">00:00</span><span id="audioDuration">--:--</span></div>
+                </div>
+              </div>
+            </div>
+            <!-- TODO: adicionar o arquivo real em assets/audiobook/trecho.mp3 no atributo src. -->
+            <audio id="audiobookAudio" preload="metadata"></audio>
           </div>
         </div>
       </div>
