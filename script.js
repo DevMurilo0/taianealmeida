@@ -1002,12 +1002,54 @@ setInterval(updateCountdown, 60000);
   renderMain();
 })();
 
-// NEWSLETTER (demo, sem backend)
-document.getElementById('nlForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-  document.getElementById('nlMsg').textContent = 'Obrigado! Assim que o formulário estiver conectado, seu e-mail será salvo de verdade.';
-  this.reset();
-});
+// NEWSLETTER — envio para o formulário público da Brevo, sem expor credenciais.
+(function () {
+  window.EMAIL_INVALID_MESSAGE = 'Digite um endereço de e-mail válido.';
+  window.REQUIRED_ERROR_MESSAGE = 'Digite seu e-mail para continuar.';
+  window.GENERIC_INVALID_MESSAGE = 'Digite um endereço de e-mail válido.';
+
+  const form = document.getElementById('sib-form');
+  const message = document.getElementById('nlMsg');
+  if (!form || !message) return;
+  const submit = form.querySelector('button[type="submit"]');
+  const email = form.querySelector('#EMAIL');
+
+  const showMessage = (text, type) => {
+    message.textContent = text;
+    message.className = `nl-msg is-${type}`;
+  };
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!email.checkValidity()) {
+      showMessage('Digite um endereço de e-mail válido.', 'error');
+      email.focus();
+      return;
+    }
+    submit.disabled = true;
+    const originalLabel = submit.textContent;
+    submit.textContent = 'Enviando...';
+    message.textContent = '';
+    message.className = 'nl-msg';
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      });
+      if (!response.ok) throw new Error(`Brevo returned ${response.status}`);
+      showMessage('Cadastro recebido! Confira seu e-mail para confirmar sua inscrição.', 'success');
+      form.reset();
+    } catch (error) {
+      console.warn('Não foi possível enviar o formulário da Brevo.', error);
+      showMessage('Não foi possível realizar o cadastro. Tente novamente em alguns instantes.', 'error');
+    } finally {
+      submit.disabled = false;
+      submit.textContent = originalLabel;
+    }
+  });
+})();
 
 // CURSOR GRID — reactive grid lattice behind the dark quote sections
 (function () {

@@ -184,8 +184,13 @@
 
           <div class="livro-newsletter">
             <p class="ln-caption">Seja avisado(a) do lançamento e para outras novidades</p>
-            <form class="nl-form" id="nlForm">
-              <input type="email" placeholder="seu@email.com" required>
+            <form class="nl-form" id="sib-form" method="POST"
+              action="https://5ff61394.sibforms.com/serve/MUIFABxXwi6v8bMOdeZnzILy1eEJnRqFsUV092LSVzMASg5ageCNqQBiTvxzL5xyDl-B6MSoEvoTicfDxpXD7fB6lG_Uzu3OKk-aFAcJD5GUZvZeuLRy3QHzvHjyVJNWqOdKfGmmWIfzM86cwoOGevEvQLZd1-wcgs4Sj05PCRQhhI6kSBmvJdBiXq5Z7On3fPwFbrldgl0yYzTX4w=="
+              data-type="subscription">
+              <label class="sr-only" for="EMAIL">Seu endereço de e-mail</label>
+              <input type="email" id="EMAIL" name="EMAIL" placeholder="seu@email.com" autocomplete="email" required>
+              <input type="text" name="email_address_check" value="" class="input--hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <input type="hidden" name="locale" value="pt">
               <button type="submit">Quero saber</button>
             </form>
             <p class="nl-msg" id="nlMsg"></p>
@@ -617,6 +622,7 @@
 
   <script src="script.js" defer></script>
   <script type="module" src="gradient-waves.js"></script>
+  <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
 </body>
 
 </html>
