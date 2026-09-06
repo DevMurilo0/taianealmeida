@@ -679,7 +679,8 @@ if ('IntersectionObserver' in window) {
   });
 })();
 
-// DEPOIMENTOS — clique pausa o carrossel, mover o mouse depois retoma
+// DEPOIMENTOS — seção temporariamente oculta; a guarda mantém a lógica inativa e pronta para restauração
+// Clique pausa o carrossel, mover o mouse depois retoma
 const depTrack = document.querySelector('.dep-track');
 if (depTrack) {
   let lastX = null;
