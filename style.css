@@ -1845,6 +1845,36 @@ section {
 }
 
 /* Compact audiobook excerpt, kept within the page-preview component. */
+.audiobook-intro {
+  width: min(100%, 560px);
+  margin-bottom: -4px;
+  color: var(--cream);
+}
+
+.audiobook-intro__eyebrow {
+  margin-bottom: 9px;
+  color: var(--cream);
+  font: 600 10px/1.3 'Inter', sans-serif;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.audiobook-intro__eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 1px;
+  margin: 0 8px 3px 0;
+  background: var(--red);
+}
+
+.audiobook-intro__description {
+  max-width: 520px;
+  margin: 0;
+  color: rgba(255, 255, 255, .72);
+  font: 400 14px/1.65 'Inter', sans-serif;
+}
+
 .audiobook-player {
   width: min(100%, 560px);
   padding: 16px 18px 17px;
@@ -1900,6 +1930,15 @@ section {
   .audiobook-player {
     width: min(88vw, 380px);
     padding: 14px 14px 15px;
+  }
+
+  .audiobook-intro {
+    width: min(88vw, 380px);
+  }
+
+  .audiobook-intro__description {
+    font-size: 13px;
+    line-height: 1.6;
   }
 
   .audiobook-player__main { gap: 11px; }
@@ -3154,6 +3193,7 @@ footer .foot-legal {
 .livro-entrance-ready .livro-newsletter .ln-caption,
 .livro-entrance-ready .livro-newsletter .nl-form,
 .livro-entrance-ready .book-spread-viewport,
+.livro-entrance-ready .audiobook-intro,
 .livro-entrance-ready .audiobook-player,
 .livro-entrance-ready .book-flip__controls > * {
   opacity: 0;
@@ -3263,10 +3303,18 @@ footer .foot-legal {
     filter .3s ease;
 }
 
+.livro-entrance-ready .audiobook-intro,
 .livro-entrance-ready .audiobook-player {
   opacity: 0;
   transform: translate3d(0, 24px, 0);
   transition: opacity .82s cubic-bezier(.16, 1, .3, 1), transform .92s cubic-bezier(.16, 1, .3, 1);
+}
+
+.livro-entrance-ready .audiobook-intro {
+  transition-delay: .28s;
+}
+
+.livro-entrance-ready .audiobook-player {
   transition-delay: .38s;
 }
 
@@ -3281,6 +3329,7 @@ footer .foot-legal {
 .livro-entrance-ready .book-flip__controls > :nth-child(3) { transition-delay: .32s; }
 
 .livro-spread-active .book-spread-viewport,
+.livro-spread-active .audiobook-intro,
 .livro-spread-active .audiobook-player,
 .livro-spread-active .book-flip__controls > * {
   opacity: 1;
@@ -3331,6 +3380,7 @@ footer .foot-legal {
   .livro-entrance-ready .livro-newsletter { transition-delay: .66s; }
   .livro-entrance-ready .livro-newsletter .ln-caption { transition-delay: .76s; }
   .livro-entrance-ready .livro-newsletter .nl-form { transition-delay: .90s; }
+  .livro-entrance-ready .audiobook-intro { transition-duration: .82s; transition-delay: .22s; }
   .livro-entrance-ready .audiobook-player { transition-duration: .86s; transition-delay: .30s; }
 }
 
@@ -3348,6 +3398,7 @@ footer .foot-legal {
   .livro-entrance-ready .livro-newsletter .ln-caption,
   .livro-entrance-ready .livro-newsletter .nl-form,
   .livro-entrance-ready .book-spread-viewport,
+  .livro-entrance-ready .audiobook-intro,
   .livro-entrance-ready .audiobook-player,
   .livro-entrance-ready .book-flip__controls > *,
   .livro-entrance-ready > .cursor-grid-canvas {

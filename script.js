@@ -952,7 +952,7 @@ setInterval(updateCountdown, 60000);
   spotifyBtn.addEventListener('click', (event) => event.preventDefault());
 })();
 
-// Player customizado do trecho do audiobook. O áudio é opcional até o arquivo real ser adicionado.
+// Player customizado do trecho do audiobook.
 (function () {
   const player = document.getElementById('audiobookPlayer');
   const audio = document.getElementById('audiobookAudio');
@@ -972,22 +972,24 @@ setInterval(updateCountdown, 60000);
     const ratio = Number.isFinite(audio.duration) && audio.duration > 0 ? (audio.currentTime / audio.duration) * 100 : 0;
     progress.value = ratio;
     current.textContent = formatTime(audio.currentTime);
+    progress.setAttribute('aria-valuetext', `${formatTime(audio.currentTime)} de ${formatTime(audio.duration)}`);
   };
   const setPlaying = (isPlaying) => {
     player.classList.toggle('is-playing', isPlaying);
     play.setAttribute('aria-label', isPlaying ? 'Pausar trecho do audiobook' : 'Reproduzir trecho do audiobook');
   };
   const enable = () => {
+    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
     play.disabled = false;
     progress.disabled = false;
     duration.textContent = formatTime(audio.duration);
     updateProgress();
   };
 
-  // Sem src, o componente permanece visível e seguro, aguardando o arquivo real.
   if (audio.getAttribute('src')) {
     audio.addEventListener('loadedmetadata', enable, { once: true });
     audio.addEventListener('durationchange', enable);
+    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) enable();
   }
   play.addEventListener('click', () => {
     if (!audio.src) return;
@@ -1000,7 +1002,16 @@ setInterval(updateCountdown, 60000);
   audio.addEventListener('timeupdate', updateProgress);
   audio.addEventListener('play', () => setPlaying(true));
   audio.addEventListener('pause', () => setPlaying(false));
-  audio.addEventListener('ended', () => { setPlaying(false); updateProgress(); });
+  audio.addEventListener('ended', () => {
+    audio.currentTime = 0;
+    setPlaying(false);
+    updateProgress();
+  });
+  audio.addEventListener('error', () => {
+    play.disabled = true;
+    progress.disabled = true;
+    setPlaying(false);
+  });
 })();
 
 // BOOK SPREAD — páginas abertas lado a lado (fotos reais), com lightbox de zoom
