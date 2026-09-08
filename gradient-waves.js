@@ -19,6 +19,7 @@ function hexToRgb(hex) {
 }
 
 function detailToSteps(detail) {
+  if (detail === 'mobile') return 24.0;
   if (detail === 'low') return 32.0;
   if (detail === 'high') return 110.0;
   return 70.0;
@@ -265,14 +266,26 @@ function mountGradientWaves(container, ogl, options = {}) {
   }
 
   let raf = 0;
+  let frameTimer = 0;
   let isVisible = true;
   let isPageVisible = !document.hidden;
   let lastRender = 0;
   const t0 = performance.now();
 
+  const scheduleFrame = () => {
+    if (raf || frameTimer || !isVisible || !isPageVisible) return;
+    if (opts.frameInterval) {
+      frameTimer = window.setTimeout(() => {
+        frameTimer = 0;
+        if (isVisible && isPageVisible) raf = requestAnimationFrame(loop);
+      }, opts.frameInterval);
+    } else {
+      raf = requestAnimationFrame(loop);
+    }
+  };
+
   const loop = t => {
-    raf = requestAnimationFrame(loop);
-    if (opts.frameInterval && t - lastRender < opts.frameInterval) return;
+    raf = 0;
     lastRender = t;
     program.uniforms.iTime.value = (t - t0) * 0.001;
     const tx = opts.mouseInteraction ? targetMouse[0] : 0.5;
@@ -282,6 +295,7 @@ function mountGradientWaves(container, ogl, options = {}) {
     program.uniforms.uMouse.value[0] = currentMouse[0];
     program.uniforms.uMouse.value[1] = currentMouse[1];
     renderer.render({ scene: mesh });
+    scheduleFrame();
   };
 
   const tryStart = () => {
@@ -289,13 +303,13 @@ function mountGradientWaves(container, ogl, options = {}) {
       renderer.render({ scene: mesh });
       return;
     }
-    if (isVisible && isPageVisible && raf === 0) raf = requestAnimationFrame(loop);
+    scheduleFrame();
   };
   const tryStop = () => {
-    if (raf !== 0) {
-      cancelAnimationFrame(raf);
-      raf = 0;
-    }
+    if (raf) cancelAnimationFrame(raf);
+    if (frameTimer) clearTimeout(frameTimer);
+    raf = 0;
+    frameTimer = 0;
   };
 
   const io = new IntersectionObserver(
@@ -343,14 +357,14 @@ document.addEventListener('DOMContentLoaded', () => {
     zoom: 1.0,
     height: 5.5,
     fogDepth: 13,
-    detail: compact ? 'low' : 'medium',
+    detail: compact ? 'mobile' : 'medium',
     brightness: 1.0,
     opacity: 0.55,
     mouseInteraction: finePointer,
     parallaxStrength: finePointer ? 0.3 : 0,
     grain: true,
     grainIntensity: 0.025,
-    frameInterval: compact ? 32 : 0
+    frameInterval: compact ? 40 : 0
       });
     } catch (error) {
       // O fundo WebGL é decorativo; o conteúdo permanece disponível se a CDN falhar.
@@ -362,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!entry.isIntersecting) return;
       preloadObserver.disconnect();
       initialize();
-    }, { rootMargin: '1000px 0px' });
+    }, { rootMargin: compact ? '300px 0px' : '1000px 0px' });
     preloadObserver.observe(container);
   } else {
     initialize();

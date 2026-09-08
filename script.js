@@ -1,5 +1,7 @@
 // NAV scroll state
 const nav = document.getElementById('mainNav');
+const mobileMotion = window.matchMedia('(max-width: 720px)').matches;
+const mobileObserverOptions = { threshold: 0.1, rootMargin: '0px 0px -5% 0px' };
 
 // NAV ACTIVE SECTION — approved red indicator, isolated from page layout.
 (function () {
@@ -29,6 +31,7 @@ const nav = document.getElementById('mainNav');
   const root = document.documentElement;
   const heroBg = document.querySelector('.hero-bg');
   const heroContent = document.querySelector('.hero-content');
+  const scrollProgress = document.getElementById('scrollProgress');
   const parallaxEls = Array.from(document.querySelectorAll('[data-parallax]'));
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -58,23 +61,26 @@ const nav = document.getElementById('mainNav');
     if (nav) nav.classList.toggle('scrolled', scrollY > 40);
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const progress = maxScroll > 0 ? Math.min(Math.max(scrollY / maxScroll, 0), 1) : 0;
-    root.style.setProperty('--scroll', progress.toFixed(4));
+    if (scrollProgress) scrollProgress.style.transform = `scaleX(${progress.toFixed(4)})`;
+    // No mobile o ambient glow é estático: evite invalidar estilos da página inteira a cada frame.
+    if (!mobileMotion) root.style.setProperty('--scroll', progress.toFixed(4));
 
     if (!prefersReduced) {
       if (heroBgReady || heroBg) {
-        const shift = Math.min(scrollY * 0.22, 140);
+        const shift = Math.min(scrollY * (mobileMotion ? 0.11 : 0.22), mobileMotion ? 64 : 140);
         heroBg.style.transform = `scale(1.08) translateY(${shift.toFixed(1)}px)`;
       }
 
       if (heroContent && scrollY < window.innerHeight * 1.1) {
-        const contentShift = scrollY * 0.32;
+        const contentShift = scrollY * (mobileMotion ? 0.16 : 0.32);
         const opacity = Math.max(0, 1 - scrollY / (window.innerHeight * 0.7));
         heroContent.style.transform = `translateY(${contentShift.toFixed(1)}px)`;
         heroContent.style.opacity = opacity.toFixed(2);
       }
 
       parallaxUpdates.forEach(([el, offset]) => {
-        el.style.transform = `translateY(${offset.toFixed(2)}px)`;
+        const mobileOffset = mobileMotion ? offset * 0.55 : offset;
+        el.style.transform = `translateY(${mobileOffset.toFixed(2)}px)`;
       });
     }
 
@@ -100,6 +106,7 @@ const nav = document.getElementById('mainNav');
   if (!book) return;
 
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compact = window.matchMedia('(max-width: 720px)').matches;
 
   let ry = -26;
   let rx = 18;
@@ -121,10 +128,31 @@ const nav = document.getElementById('mainNav');
   let bookVisible = false;
   let hasEntered = false;
   let bookRaf = 0;
+  let bookTimer = 0;
+  let pageVisible = !document.hidden;
   let entryStart = null;
   const entryBaseRy = ry;
   const ENTRY_SPINS = 380;    // graus extras percorridos na entrada (pouco mais de 1 volta)
-  const ENTRY_DURATION = window.matchMedia('(max-width: 720px)').matches ? 1800 : 3200;
+  const ENTRY_DURATION = compact ? 1050 : 3200;
+
+  function scheduleFrame() {
+    if (bookRaf || bookTimer || !pageVisible || (!bookVisible && !dragging && !entering)) return;
+    if (compact && !dragging) {
+      bookTimer = window.setTimeout(() => {
+        bookTimer = 0;
+        if (pageVisible && (bookVisible || dragging || entering)) bookRaf = requestAnimationFrame(frame);
+      }, 32);
+    } else {
+      bookRaf = requestAnimationFrame(frame);
+    }
+  }
+
+  function stopFrames() {
+    if (bookRaf) cancelAnimationFrame(bookRaf);
+    if (bookTimer) clearTimeout(bookTimer);
+    bookRaf = 0;
+    bookTimer = 0;
+  }
 
   function apply() {
     book.style.setProperty('--ry', ry + 'deg');
@@ -136,6 +164,7 @@ const nav = document.getElementById('mainNav');
   }
 
   function frame(ts) {
+    bookRaf = 0;
     if (entering) {
       if (entryStart === null) entryStart = ts;
       const t = Math.min(1, (ts - entryStart) / ENTRY_DURATION);
@@ -156,7 +185,7 @@ const nav = document.getElementById('mainNav');
       lastTs = ts;
     }
     apply();
-    bookRaf = (bookVisible || dragging || entering) ? requestAnimationFrame(frame) : 0;
+    scheduleFrame();
   }
 
   book.addEventListener('pointerdown', (e) => {
@@ -167,7 +196,7 @@ const nav = document.getElementById('mainNav');
     startRy = ry;
     startRx = rx;
     book.setPointerCapture(e.pointerId);
-    if (!prefersReduced && !bookRaf) bookRaf = requestAnimationFrame(frame);
+    if (!prefersReduced) scheduleFrame();
   });
 
   book.addEventListener('pointermove', (e) => {
@@ -202,6 +231,7 @@ const nav = document.getElementById('mainNav');
       entries.forEach((entry) => {
         bookVisible = entry.isIntersecting;
         if (entry.isIntersecting) {
+          book.style.willChange = 'transform';
           if (!hasEntered) {
             hasEntered = true;
             wrap.classList.add('is-visible');
@@ -212,20 +242,32 @@ const nav = document.getElementById('mainNav');
               rotationActive = true;
             }
           }
-          if (!prefersReduced && !bookRaf) {
+          if (!prefersReduced) {
             lastTs = null;
-            bookRaf = requestAnimationFrame(frame);
+            scheduleFrame();
           }
+        } else if (!dragging) {
+          stopFrames();
+          book.style.willChange = 'auto';
         }
       });
-    }, { threshold: 0.01, rootMargin: '0px 0px 140px 0px' });
+    }, compact ? mobileObserverOptions : { threshold: 0.01, rootMargin: '0px 0px 140px 0px' });
     entryIo.observe(wrapStage || wrap);
   } else if (wrap) {
     bookVisible = true;
     wrap.classList.add('is-visible');
     rotationActive = !prefersReduced;
-    if (!prefersReduced) bookRaf = requestAnimationFrame(frame);
+    if (!prefersReduced) scheduleFrame();
   }
+
+  document.addEventListener('visibilitychange', () => {
+    pageVisible = !document.hidden;
+    if (!pageVisible) stopFrames();
+    else if (!prefersReduced && bookVisible) {
+      lastTs = null;
+      scheduleFrame();
+    }
+  });
 })();
 
 // ORBIT IMAGES — mockups do livro girando em órbita elíptica ao redor da foto da autora
@@ -245,6 +287,7 @@ const nav = document.getElementById('mainNav');
   const HIGHLIGHT_SCALE = 1.28; // quanto o item em destaque cresce
   const EASE = 0.14; // suavização do crescimento/encolhimento (mais fluido)
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compact = window.matchMedia('(max-width: 720px)').matches;
 
   let rx = 0, ry = 0;
   function measure() {
@@ -338,12 +381,33 @@ const nav = document.getElementById('mainNav');
     render(0, 16);
   } else {
     let raf = 0;
+    let timer = 0;
     let last = performance.now();
     let isVisible = false;
+    let pageVisible = !document.hidden;
+
+    function scheduleTick() {
+      if (raf || timer || !isVisible || !pageVisible) return;
+      if (compact) {
+        timer = window.setTimeout(() => {
+          timer = 0;
+          if (isVisible && pageVisible) raf = requestAnimationFrame(tick);
+        }, 32);
+      } else {
+        raf = requestAnimationFrame(tick);
+      }
+    }
+
+    function stopTick() {
+      if (raf) cancelAnimationFrame(raf);
+      if (timer) clearTimeout(timer);
+      raf = 0;
+      timer = 0;
+    }
 
     function tick(now) {
+      raf = 0;
       if (!isVisible) {
-        raf = 0;
         return;
       }
       const dt = Math.min(now - last, 48); // evita saltos após aba inativa
@@ -356,7 +420,7 @@ const nav = document.getElementById('mainNav');
       }
 
       render(angleOffset, dt);
-      raf = requestAnimationFrame(tick);
+      scheduleTick();
     }
 
     if ('IntersectionObserver' in window) {
@@ -364,14 +428,27 @@ const nav = document.getElementById('mainNav');
         isVisible = entry.isIntersecting;
         if (isVisible && !raf) {
           last = performance.now();
-          raf = requestAnimationFrame(tick);
+          scheduleTick();
+        } else if (!isVisible) {
+          stopTick();
+          items.forEach(item => { item.el.style.willChange = 'auto'; });
         }
-      }, { rootMargin: '160px 0px', threshold: 0 });
+        if (isVisible) items.forEach(item => { item.el.style.willChange = 'transform'; });
+      }, { rootMargin: compact ? '0px' : '160px 0px', threshold: compact ? 0.08 : 0 });
       orbitObserver.observe(orbit);
     } else {
       isVisible = true;
-      raf = requestAnimationFrame(tick);
+      scheduleTick();
     }
+
+    document.addEventListener('visibilitychange', () => {
+      pageVisible = !document.hidden;
+      if (!pageVisible) stopTick();
+      else if (isVisible) {
+        last = performance.now();
+        scheduleTick();
+      }
+    });
   }
 
   const ro = new ResizeObserver(measure);
@@ -405,7 +482,7 @@ const nav = document.getElementById('mainNav');
   const el = document.getElementById('foldTitle');
   if (!el) return;
   const compact = window.matchMedia('(max-width: 720px)').matches;
-  const charDelay = compact ? 0.025 : 0.045;
+  const charDelay = compact ? 0.04 : 0.045;
   el.querySelectorAll('.line1, .line2').forEach((line, lineIndex) => {
     const text = line.textContent;
     line.textContent = '';
@@ -445,7 +522,7 @@ const nav = document.getElementById('mainNav');
       [...word].forEach(ch => {
         const charSpan = document.createElement('span');
         charSpan.className = 'split-char';
-        const charStagger = compact ? 0.012 : 0.02;
+        const charStagger = compact ? 0.018 : 0.02;
         charSpan.style.transitionDelay = (charIndex * charStagger) + 's';
         charSpan.textContent = ch;
         wordSpan.appendChild(charSpan);
@@ -489,12 +566,12 @@ const nav = document.getElementById('mainNav');
   if ('IntersectionObserver' in window) {
     const splitObs = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting || entry.boundingClientRect.bottom < 0) {
           entry.target.classList.add('split-animated');
           splitObs.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.01, rootMargin: '0px 0px 140px 0px' });
+    }, compact ? mobileObserverOptions : { threshold: 0.01, rootMargin: '0px 0px 140px 0px' });
     splitEls.forEach(el => splitObs.observe(el));
   } else {
     splitEls.forEach(el => el.classList.add('split-animated'));
@@ -555,6 +632,7 @@ const nav = document.getElementById('mainNav');
 
   const prefersReduced = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compact = window.matchMedia('(max-width: 720px)').matches;
 
   let hasPlayed = false;
   function buildEditorialLines() {
@@ -594,7 +672,7 @@ const nav = document.getElementById('mainNav');
   buildEditorialLines();
 
   if (prefersReduced || !('IntersectionObserver' in window)) {
-    section.classList.add('livro-entrance-ready', 'livro-intro-active',
+    section.classList.add('livro-entrance-ready', 'livro-cover-active', 'livro-intro-active',
       'livro-secondary-active', 'livro-spread-active');
     title.classList.add('is-lines-visible');
     return;
@@ -603,26 +681,37 @@ const nav = document.getElementById('mainNav');
   section.classList.add('livro-entrance-ready');
 
   const introObserver = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
+    if (!entry.isIntersecting && entry.boundingClientRect.bottom >= 0) return;
     hasPlayed = true;
+    if (!compact) section.classList.add('livro-cover-active');
     section.classList.add('livro-intro-active');
     title.classList.add('is-lines-visible');
     introObserver.disconnect();
-  }, { threshold: 0.01, rootMargin: '0px 0px 160px 0px' });
+  }, compact ? mobileObserverOptions : { threshold: 0.01, rootMargin: '0px 0px 160px 0px' });
+
+  const coverObserver = compact ? new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting && entry.boundingClientRect.bottom >= 0) return;
+    section.classList.add('livro-cover-active');
+    coverObserver.disconnect();
+  }, mobileObserverOptions) : null;
 
   const secondaryObserver = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
+    if (!entry.isIntersecting && entry.boundingClientRect.bottom >= 0) return;
     section.classList.add('livro-secondary-active');
     secondaryObserver.disconnect();
-  }, { threshold: 0.01, rootMargin: '0px 0px 80px 0px' });
+  }, compact ? mobileObserverOptions : { threshold: 0.01, rootMargin: '0px 0px 80px 0px' });
 
   const spreadObserver = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
+    if (!entry.isIntersecting && entry.boundingClientRect.bottom >= 0) return;
     section.classList.add('livro-spread-active');
     spreadObserver.disconnect();
-  }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
+  }, { threshold: compact ? 0.1 : 0.08, rootMargin: '0px 0px -5% 0px' });
 
-  introObserver.observe(section);
+  const editorialColumn = title.closest('.reveal') || title;
+  introObserver.observe(compact ? editorialColumn : section);
+  const cover = section.querySelector('.book-cover-wrap');
+  if (coverObserver && cover) coverObserver.observe(cover);
+  else if (compact) section.classList.add('livro-cover-active');
   const countdown = section.querySelector('#countdown');
   const spread = section.querySelector('#bookSpread');
   if (countdown) secondaryObserver.observe(countdown);
@@ -634,19 +723,64 @@ const nav = document.getElementById('mainNav');
 // REVEAL ON SCROLL
 const revealEls = Array.from(document.querySelectorAll('.reveal'))
   .filter(el => !el.closest('.livro'));
+if (mobileMotion) {
+  const sequences = [
+    ['.sinopse-text', ':scope > .sinopse-badge, :scope > .section-title, :scope > p'],
+    ['.sobre-mim', ':scope > .section-label, :scope > .sobre-mim-label, :scope > p'],
+    ['#autora .autora-grid > .reveal.from-right', ':scope > .section-label, :scope > .autora-kicker, :scope > .autora-name, :scope > .autora-bio']
+  ];
+  sequences.forEach(([groupSelector, itemSelector]) => {
+    const group = document.querySelector(groupSelector);
+    if (!group) return;
+    group.classList.add('reveal-sequence');
+    group.querySelectorAll(itemSelector).forEach((item, index) => {
+      item.classList.add('reveal-sequence-item');
+      item.style.setProperty('--sequence-index', Math.min(index, 6));
+    });
+  });
+
+  const mobileRevealSelectors = [
+    '#autora .formacao-list li',
+    '#autora .contato-chip',
+    '#trabalhos > .container > .section-label',
+    '#colaboradores > .container > .section-label',
+    '.apoio-label',
+    '.regua-col',
+    'footer .foot-name',
+    'footer .foot-links',
+    'footer .foot-legal'
+  ];
+  const mobileRevealItems = Array.from(document.querySelectorAll(mobileRevealSelectors.join(',')));
+  mobileRevealItems.forEach((item, index) => {
+    item.classList.add('mobile-reveal-item');
+    item.style.setProperty('--mobile-item-delay', `${(index % 4) * 120}ms`);
+  });
+  if ('IntersectionObserver' in window) {
+    const mobileItemObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting && entry.boundingClientRect.bottom >= 0) return;
+        entry.target.classList.add('mobile-in-view');
+        mobileItemObserver.unobserve(entry.target);
+      });
+    }, mobileObserverOptions);
+    mobileRevealItems.forEach(item => mobileItemObserver.observe(item));
+  } else {
+    mobileRevealItems.forEach(item => item.classList.add('mobile-in-view'));
+  }
+}
 if ('IntersectionObserver' in window) {
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
+      if (!entry.isIntersecting && entry.boundingClientRect.bottom >= 0) return;
       const el = entry.target;
       io.unobserve(el);
       const group = el.closest('.colab-grid');
-      const staggerStep = window.matchMedia('(max-width: 720px)').matches ? 65 : 90;
+      const staggerStep = mobileMotion ? 150 : 90;
       const stagger = group ? Array.from(group.children).indexOf(el) * staggerStep : 0;
       el.style.setProperty('--reveal-delay', `${stagger}ms`);
       el.classList.add('in-view');
     });
-  }, { threshold: 0.01, rootMargin: '0px 0px 160px 0px' });
+  }, mobileMotion ? mobileObserverOptions : { threshold: 0.01, rootMargin: '0px 0px 160px 0px' });
   revealEls.forEach(el => io.observe(el));
 } else {
   revealEls.forEach(el => el.classList.add('in-view'));
@@ -725,7 +859,7 @@ const pubList = document.querySelector('.pub-list');
 if (pubList) {
   const pubItems = pubList.querySelectorAll('.pub-item');
   const compact = window.matchMedia('(max-width: 720px)').matches;
-  const stagger = compact ? 0.07 : 0.12;
+  const stagger = compact ? 0.14 : 0.12;
   pubItems.forEach((item, i) => {
     const base = i * stagger;
     // só o fade (3ª posição na lista de transition do .pub-item) ganha o atraso;
@@ -738,18 +872,18 @@ if (pubList) {
     // dentro de cada item, tag -> título -> descrição -> link aparecem em sequência
     const partes = item.querySelectorAll('.pub-tag, .pub-title, .pub-desc, .pub-link');
     partes.forEach((parte, j) => {
-      parte.style.transitionDelay = (base + 0.06 + j * (compact ? 0.05 : 0.07)) + 's';
+      parte.style.transitionDelay = (base + 0.06 + j * (compact ? 0.12 : 0.07)) + 's';
     });
   });
   if ('IntersectionObserver' in window) {
     const pubIo = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting || entry.boundingClientRect.bottom < 0) {
           pubList.classList.add('in-view');
           pubIo.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.01, rootMargin: '0px 0px 180px 0px' });
+    }, compact ? mobileObserverOptions : { threshold: 0.01, rootMargin: '0px 0px 180px 0px' });
     pubIo.observe(pubList);
   } else {
     pubList.classList.add('in-view');
@@ -1056,7 +1190,8 @@ setInterval(updateCountdown, 60000);
 (function () {
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hasHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (prefersReduced || !hasHover) return; // no mouse to react to on touch devices — skip the canvas loop entirely
+  const compact = window.matchMedia('(max-width: 720px)').matches;
+  if (prefersReduced) return;
 
   const FALLOFF_CURVES = {
     linear: t => t,
@@ -1075,7 +1210,7 @@ setInterval(updateCountdown, 60000);
     const canvas = section.querySelector('.cursor-grid-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, compact ? 1.25 : 2);
     const p = Object.assign({
       cellSize: 70, color: '#ffffff', radius: 140, falloff: 'smooth',
       holdTime: 400, fadeDuration: 800, lineWidth: 1.2, maxOpacity: 1,
@@ -1085,6 +1220,7 @@ setInterval(updateCountdown, 60000);
     let cols = 0, rows = 0, offX = 0, offY = 0;
     let alphas = new Float32Array(0), touched = new Float64Array(0);
     let w = 0, h = 0, raf = 0, running = false, lastFrame = 0;
+    let sectionVisible = !('IntersectionObserver' in window);
     const pulses = [];
 
     function rebuild() {
@@ -1130,6 +1266,7 @@ setInterval(updateCountdown, 60000);
     }
 
     function draw(now) {
+      raf = 0;
       const dt = Math.min(now - lastFrame, 50);
       lastFrame = now;
       ctx.clearRect(0, 0, w, h);
@@ -1212,7 +1349,7 @@ setInterval(updateCountdown, 60000);
     }
 
     function wake() {
-      if (running) return;
+      if (running || !sectionVisible || document.hidden) return;
       running = true;
       lastFrame = performance.now();
       raf = requestAnimationFrame(draw);
@@ -1223,11 +1360,13 @@ setInterval(updateCountdown, 60000);
       return [e.clientX - rect.left, e.clientY - rect.top];
     }
 
-    section.addEventListener('pointermove', e => {
-      const [x, y] = toLocal(e);
-      energize(x, y);
-      wake();
-    });
+    if (hasHover) {
+      section.addEventListener('pointermove', e => {
+        const [x, y] = toLocal(e);
+        energize(x, y);
+        wake();
+      });
+    }
 
     section.addEventListener('pointerdown', e => {
       if (!p.clickPulse) return;
@@ -1239,7 +1378,31 @@ setInterval(updateCountdown, 60000);
     const ro = new ResizeObserver(() => { rebuild(); wake(); });
     ro.observe(section);
     rebuild();
-    wake();
+
+    if ('IntersectionObserver' in window) {
+      const visibilityObserver = new IntersectionObserver(([entry]) => {
+        sectionVisible = entry.isIntersecting;
+        if (sectionVisible) wake();
+        else if (raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+          running = false;
+        }
+      }, { threshold: 0, rootMargin: compact ? '0px' : '120px 0px' });
+      visibilityObserver.observe(section);
+    } else {
+      wake();
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        running = false;
+      } else if (!document.hidden && sectionVisible) {
+        wake();
+      }
+    });
   }
 
   document.querySelectorAll('.cursor-grid-bg').forEach(section => {
