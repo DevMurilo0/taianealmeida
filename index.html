@@ -28,7 +28,6 @@
       <a href="#depoimentos">Depoimentos</a>
       -->
       <a href="#colaboradores">Colaboradores</a>
-      <a href="#contato">Contato</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
       <span></span><span></span><span></span>
@@ -50,7 +49,7 @@
           <span class="line1">E REFLEXÕES</span>
         </h1>
       </div>
-      <h1 class="hero-sub">ACERCA DA POPULAÇÃO NEGRA NO TERRITORIO BAIANO</h1>
+      <h1 class="hero-sub">ACERCA DA POPULAÇÃO NEGRA NO TERRITÓRIO BAIANO</h1>
       <p class="hero-tagline">
         <span class="rotating-text-wrapper">
           <span class="rotating-text-static">Uma reflexão sobre</span>
@@ -104,8 +103,7 @@
         <p>Em diálogo com o conceito de necropolítica, a obra convida o leitor a refletir sobre a distribuição desigual
           da proteção à vida e da exposição à morte, e sobre como certos corpos e territórios são historicamente
           marcados pela violência do Estado.</p>
-        <p><em>Este texto é um rascunho para o protótipo; pode ser substituído a qualquer momento pela sinopse
-            definitiva.</em></p>
+
       </div>
     </div>
   </section>
@@ -179,7 +177,8 @@
             aria-label="Ouvir audiobook completo no Spotify" aria-disabled="true">
             <svg class="spotify-icon" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
-              <path d="M7.8 10.2c2.9-.8 5.9-.5 8.4.7M8.4 13c2.4-.6 4.8-.3 6.9.7M9.1 15.6c1.8-.4 3.6-.2 5.2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              <path d="M7.8 10.2c2.9-.8 5.9-.5 8.4.7M8.4 13c2.4-.6 4.8-.3 6.9.7M9.1 15.6c1.8-.4 3.6-.2 5.2.5"
+                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
             </svg>
             Ouvir no Spotify
           </button>
@@ -191,7 +190,8 @@
               data-type="subscription">
               <label class="sr-only" for="EMAIL">Seu endereço de e-mail</label>
               <input type="email" id="EMAIL" name="EMAIL" placeholder="seu@email.com" autocomplete="email" required>
-              <input type="text" name="email_address_check" value="" class="input--hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <input type="text" name="email_address_check" value="" class="input--hidden" tabindex="-1"
+                autocomplete="off" aria-hidden="true">
               <input type="hidden" name="locale" value="pt">
               <button type="submit">Quero saber</button>
             </form>
@@ -249,15 +249,22 @@
           <div class="audiobook-player" id="audiobookPlayer">
             <div class="audiobook-player__eyebrow">Trecho do audiobook</div>
             <div class="audiobook-player__main">
-              <button type="button" class="audiobook-player__play" id="audioPlay" aria-label="Reproduzir trecho do audiobook" disabled>
-                <svg class="audio-icon audio-icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7.2v9.6L17 12 9 7.2Z" fill="currentColor" /></svg>
-                <svg class="audio-icon audio-icon--pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7v10M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+              <button type="button" class="audiobook-player__play" id="audioPlay"
+                aria-label="Reproduzir trecho do audiobook" disabled>
+                <svg class="audio-icon audio-icon--play" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 7.2v9.6L17 12 9 7.2Z" fill="currentColor" />
+                </svg>
+                <svg class="audio-icon audio-icon--pause" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 7v10M15 7v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
               </button>
               <div class="audiobook-player__body">
                 <div class="audiobook-player__title">Ouça um trecho da obra</div>
                 <div class="audiobook-player__progress-row">
-                  <input id="audioProgress" class="audiobook-player__progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="Progresso do trecho do audiobook" disabled>
-                  <div class="audiobook-player__times"><span id="audioCurrent">00:00</span><span id="audioDuration">--:--</span></div>
+                  <input id="audioProgress" class="audiobook-player__progress" type="range" min="0" max="100" value="0"
+                    step="0.1" aria-label="Progresso do trecho do audiobook" disabled>
+                  <div class="audiobook-player__times"><span id="audioCurrent">00:00</span><span
+                      id="audioDuration">--:--</span></div>
                 </div>
               </div>
             </div>
@@ -433,7 +440,7 @@
             <div class="dep-role">Instituição a confirmar</div>
           </div>
   -->
-          <!-- cópia dos mesmos cards, usada só pra fechar o loop infinito -->
+  <!-- cópia dos mesmos cards, usada só pra fechar o loop infinito -->
   <!--
           <div class="dep-card" aria-hidden="true">
             <p class="dep-quote">"Um trabalho rigoroso que conecta teoria social e realidade concreta das periferias
@@ -526,8 +533,8 @@
       <div class="colab-grid">
         <div class="colab-card reveal from-bottom">
           <div class="colab-photo">
-            <img src="assets/colaboradores/carla-piaggio.webp" alt="Retrato de Carla Piaggio" width="900"
-              height="900" loading="lazy" decoding="async">
+            <img src="assets/colaboradores/carla-piaggio.webp" alt="Retrato de Carla Piaggio" width="900" height="900"
+              loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
@@ -554,8 +561,8 @@
 
         <div class="colab-card reveal from-bottom">
           <div class="colab-photo">
-            <img src="assets/colaboradores/daniele-silva.webp" alt="Retrato de Daniele Silva" width="733"
-              height="1100" loading="lazy" decoding="async">
+            <img src="assets/colaboradores/daniele-silva.webp" alt="Retrato de Daniele Silva" width="733" height="1100"
+              loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
@@ -568,8 +575,8 @@
 
         <div class="colab-card reveal from-bottom">
           <div class="colab-photo">
-            <img src="assets/colaboradores/murilo-gabriel.webp" alt="Retrato de Murilo Gabriel" width="398"
-              height="690" loading="lazy" decoding="async">
+            <img src="assets/colaboradores/murilo-gabriel.webp" alt="Retrato de Murilo Gabriel" width="398" height="690"
+              loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
@@ -582,8 +589,8 @@
 
         <div class="colab-card reveal from-bottom">
           <div class="colab-photo">
-            <img src="assets/colaboradores/cicera-ramos.webp" alt="Retrato de Cicera Ramos" width="900"
-              height="1118" loading="lazy" decoding="async">
+            <img src="assets/colaboradores/cicera-ramos.webp" alt="Retrato de Cicera Ramos" width="900" height="1118"
+              loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
           <div class="colab-info">
