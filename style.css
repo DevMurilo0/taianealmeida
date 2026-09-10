@@ -1487,9 +1487,9 @@ section {
 
   .livro-cta .spotify-btn:hover,
   .livro-cta .spotify-btn:focus-visible {
-    background: #1ed760;
-    border-color: #1ed760;
-    color: #071b10;
+    background: var(--white);
+    border-color: var(--white);
+    color: var(--black);
     outline: none;
   }
 }
@@ -2036,6 +2036,15 @@ section {
   will-change: auto;
 }
 
+/* O destaque prevalece sobre a opacidade de profundidade aplicada pelo loop. */
+.orbit-item.is-orbit-active {
+  opacity: 1 !important;
+}
+
+.orbit-item.is-orbit-active img {
+  opacity: 1;
+}
+
 .orbit-item img {
   width: 100%;
   height: auto;
@@ -2044,6 +2053,18 @@ section {
   opacity: 1;
   transition: filter .65s cubic-bezier(.16, 1, .3, 1),
     opacity .55s ease;
+}
+
+.orbit-audiobook-frame {
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(243, 237, 225, .18);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, .2);
+}
+
+.orbit-audiobook-frame img {
+  object-fit: contain;
+  filter: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3013,6 +3034,15 @@ footer .foot-legal {
 }
 .trabalhos .pub-desc { max-width: 690px; margin-bottom: 0; font-size: .92rem; line-height: 1.72; }
 .trabalhos .pub-link { width: max-content; margin-top: 18px; font-size: 10px; letter-spacing: .1em; }
+.trabalhos .pub-project-image {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
 
 /* Collaborators */
 .colaboradores { padding: clamp(100px, 10vw, 150px) 0; }

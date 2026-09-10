@@ -939,19 +939,6 @@ setInterval(updateCountdown, 60000);
   }
 })();
 
-// Livro CTA — mantém o botão do Spotify preparado até que a URL oficial seja definida.
-(function () {
-  const spotifyBtn = document.getElementById('spotifyBtn');
-  if (!spotifyBtn) return;
-  const url = spotifyBtn.dataset.spotifyUrl?.trim();
-  if (url) {
-    spotifyBtn.removeAttribute('aria-disabled');
-    spotifyBtn.addEventListener('click', () => window.open(url, '_blank', 'noopener,noreferrer'));
-    return;
-  }
-  spotifyBtn.addEventListener('click', (event) => event.preventDefault());
-})();
-
 // Player customizado do trecho do audiobook.
 (function () {
   const player = document.getElementById('audiobookPlayer');
