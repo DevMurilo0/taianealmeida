@@ -39,6 +39,137 @@
     href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,800;0,900;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Estado de lançamento: visual leve e isolado, sem alterar o restante do design. -->
+  <style>
+    .launch-status {
+      position: relative;
+      width: min(100%, 340px);
+      margin: 4px auto 24px;
+      padding: 18px 20px 19px;
+      overflow: hidden;
+      text-align: center;
+      border: 1px solid rgba(200, 31, 31, .38);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(200, 31, 31, .10), rgba(200, 31, 31, .025) 46%, rgba(0, 0, 0, .12));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .055),
+        0 14px 34px rgba(0, 0, 0, .17);
+      color: var(--cream);
+      animation: launchStatusReveal .78s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    .launch-status::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 72px;
+      height: 2px;
+      background: var(--red);
+      transform: translateX(-50%);
+      box-shadow: 0 0 18px rgba(200, 31, 31, .38);
+    }
+
+    .launch-status::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 0%, rgba(200, 31, 31, .11), transparent 52%);
+    }
+
+    .launch-status > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .launch-status__kicker {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(243, 237, 225, .58);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .23em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .launch-status__title {
+      margin: 0;
+      color: var(--cream);
+      font-family: 'Bitter', serif;
+      font-size: clamp(1.22rem, 2.2vw, 1.58rem);
+      font-weight: 600;
+      line-height: 1.18;
+      letter-spacing: -.025em;
+    }
+
+    .launch-status__highlight {
+      display: inline-block;
+      margin-left: .16em;
+      padding: .09em .34em .12em;
+      color: #fff;
+      background: var(--red);
+      border-radius: 4px;
+      font-weight: 900;
+      letter-spacing: .025em;
+      line-height: 1;
+      transform: rotate(-1deg);
+      box-shadow: 0 5px 16px rgba(200, 31, 31, .24);
+    }
+
+    .launch-status__rule {
+      display: block;
+      width: 38px;
+      height: 1px;
+      margin: 13px auto 11px;
+      background: rgba(243, 237, 225, .34);
+    }
+
+    .launch-status__sub {
+      margin: 0;
+      color: rgba(243, 237, 225, .72);
+      font-size: 11px;
+      line-height: 1.55;
+      letter-spacing: .035em;
+    }
+
+    @keyframes launchStatusReveal {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .launch-status {
+        width: min(100%, 310px);
+        margin-bottom: 21px;
+        padding: 16px 16px 17px;
+        border-radius: 8px;
+      }
+
+      .launch-status__title {
+        font-size: 1.26rem;
+      }
+
+      .launch-status__sub {
+        font-size: 10.5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .launch-status {
+        animation: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -91,9 +222,6 @@
     </div>
   </section>
 
-
-
-
   <!-- QUOTE 1 - left, paired with a photo of the author -->
 
   <!-- SINOPSE -->
@@ -130,7 +258,6 @@
         <p>Em diálogo com o conceito de necropolítica, a obra convida o leitor a refletir sobre a distribuição desigual
           da proteção à vida e da exposição à morte, e sobre como certos corpos e territórios são historicamente
           marcados pela violência do Estado.</p>
-
       </div>
     </div>
   </section>
@@ -156,7 +283,6 @@
     </div>
   </section>
 
-
   <!-- QUOTE 2 - center on dark -->
   <section class="quote-section dark goal-bg ambient-glow">
     <div class="container">
@@ -166,8 +292,6 @@
       </blockquote>
     </div>
   </section>
-
-
 
   <!-- LIVRO -->
   <section class="livro cursor-grid-bg ambient-glow" id="livro">
@@ -187,7 +311,17 @@
               <div class="cd-label">horas</div>
             </div>
           </div>
-          <p class="cd-caption">Faltam para o lançamento, no dia 11 de setembro</p>
+
+          <div class="launch-status" id="launchStatus" aria-live="polite" hidden>
+            <span class="launch-status__kicker" id="launchStatusKicker"></span>
+            <p class="launch-status__title">
+              <span id="launchStatusLead"></span><strong class="launch-status__highlight" id="launchStatusHighlight"></strong>
+            </p>
+            <span class="launch-status__rule" aria-hidden="true"></span>
+            <p class="launch-status__sub" id="launchStatusSub"></p>
+          </div>
+
+          <p class="cd-caption" id="countdownCaption">Faltam para o lançamento, no dia 11 de setembro</p>
           <a href="https://www.amazon.com.br/dp/B0HJBYMPZR/ref=mp_s_a_1_1?crid=3K2U5C9Z5D4BV&dib=eyJ2IjoiMSJ9.YlyxGwisrDa3qDnV0u-QEEXWohz8nEbCLAIsquaenWfNf5iiUB16h9qG-_--KOvYTPI65YmHmj3xDpbNdmT8Vw.cNkX0yG9-xN4MQ84iaETBEr9tyuZ7ePaU0CKVfbHmpA&dib_tag=se&keywords=taiane+almeida&qid=1789025018&sprefix=taiane+almeida%2Caps%2C266&sr=8-1" class="amazon-btn" id="amazonBtn"
             target="_blank" rel="noopener noreferrer" aria-label="Comprar Necropolítica e Reflexões na Amazon">
             <svg class="amazon-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -332,7 +466,6 @@
   </div>
 
   <!-- QUOTE 3 - right -->
-
   <!--
   <section class="quote-section">
     <div class="container">
@@ -732,6 +865,86 @@
   <script src="script.js" defer></script>
   <script type="module" src="gradient-waves.js"></script>
   <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
+
+  <script>
+    // Estado do lançamento baseado no calendário de Feira de Santana/BA.
+    // Antes de 11/09/2026: mantém a contagem regressiva existente.
+    // Em 11/09/2026: mostra “Lançado HOJE!”.
+    // Depois: mostra “Já LANÇADO! Tenha o seu exemplar.”
+    (function () {
+      const LAUNCH_DAY = '2026-09-11';
+      const BRAZIL_TIME_ZONE = 'America/Bahia';
+
+      const countdown = document.getElementById('countdown');
+      const countdownCaption = document.getElementById('countdownCaption');
+      const launchStatus = document.getElementById('launchStatus');
+      const kicker = document.getElementById('launchStatusKicker');
+      const lead = document.getElementById('launchStatusLead');
+      const highlight = document.getElementById('launchStatusHighlight');
+      const sub = document.getElementById('launchStatusSub');
+
+      if (!countdown || !countdownCaption || !launchStatus || !kicker || !lead || !highlight || !sub) return;
+
+      function dateKeyInBahia(date) {
+        try {
+          const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: BRAZIL_TIME_ZONE,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          }).formatToParts(date);
+
+          const values = {};
+          parts.forEach(part => {
+            if (part.type !== 'literal') values[part.type] = part.value;
+          });
+
+          return `${values.year}-${values.month}-${values.day}`;
+        } catch (error) {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        }
+      }
+
+      function renderLaunchState() {
+        const today = dateKeyInBahia(new Date());
+        const isLaunchDay = today === LAUNCH_DAY;
+        const isAfterLaunch = today > LAUNCH_DAY;
+
+        if (!isLaunchDay && !isAfterLaunch) {
+          countdown.hidden = false;
+          countdownCaption.hidden = false;
+          launchStatus.hidden = true;
+          return;
+        }
+
+        countdown.hidden = true;
+        countdownCaption.hidden = true;
+        launchStatus.hidden = false;
+
+        if (isLaunchDay) {
+          launchStatus.classList.add('launch-status--today');
+          launchStatus.classList.remove('launch-status--released');
+          kicker.textContent = '11 de setembro · lançamento';
+          lead.textContent = 'Lançado ';
+          highlight.textContent = 'HOJE!';
+          sub.textContent = 'O livro já está disponível. Garanta o seu exemplar.';
+        } else {
+          launchStatus.classList.remove('launch-status--today');
+          launchStatus.classList.add('launch-status--released');
+          kicker.textContent = 'Disponível agora';
+          lead.textContent = 'Já ';
+          highlight.textContent = 'LANÇADO!';
+          sub.textContent = 'Tenha o seu exemplar.';
+        }
+      }
+
+      renderLaunchState();
+      window.setInterval(renderLaunchState, 60000);
+    })();
+  </script>
 </body>
 
 </html>
