@@ -80,7 +80,7 @@
       background: radial-gradient(circle at 50% 0%, rgba(200, 31, 31, .11), transparent 52%);
     }
 
-    .launch-status > * {
+    .launch-status>* {
       position: relative;
       z-index: 1;
     }
@@ -141,6 +141,7 @@
         opacity: 0;
         transform: translateY(14px) scale(.985);
       }
+
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -167,6 +168,108 @@
     @media (prefers-reduced-motion: reduce) {
       .launch-status {
         animation: none;
+      }
+    }
+
+
+    /* Links sociais discretos dos colaboradores + crédito do desenvolvedor. */
+    .colab-info--with-social .colab-text {
+      padding-right: 46px;
+    }
+
+    .colab-instagram {
+      position: absolute;
+      top: 10px;
+      right: 0;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(243, 237, 225, .24);
+      border-radius: 50%;
+      color: rgba(243, 237, 225, .72);
+      background: rgba(12, 8, 6, .16);
+      opacity: .78;
+      transform: translateY(2px);
+      transition: color .3s ease, background-color .3s ease, border-color .3s ease,
+        opacity .3s ease, transform .3s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .colab-instagram svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .colab-instagram:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
+      color: #fff;
+      opacity: 1;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .colab-card:hover .colab-instagram {
+        color: #fff;
+        border-color: rgba(243, 237, 225, .42);
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .colab-instagram:hover {
+        color: #fff;
+        background: var(--red);
+        border-color: var(--red);
+        transform: translateY(-2px) !important;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .colab-instagram {
+        width: 38px;
+        height: 38px;
+        top: 8px;
+        opacity: .9;
+      }
+
+      .colab-instagram svg {
+        width: 17px;
+        height: 17px;
+      }
+
+      .colab-info--with-social .colab-text {
+        padding-right: 52px;
+      }
+    }
+
+    footer .foot-legal .foot-developer {
+      position: relative;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      color: rgba(255, 255, 255, .94);
+      font-weight: 600;
+      opacity: 1;
+      transition: color .25s ease, opacity .25s ease;
+    }
+
+    footer .foot-legal .foot-developer::after {
+      content: '↗';
+      color: var(--red);
+      font-size: .85em;
+      opacity: .72;
+      transform: translateY(-1px);
+      transition: transform .25s ease, opacity .25s ease;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      footer .foot-legal .foot-developer:hover {
+        color: #fff;
+      }
+
+      footer .foot-legal .foot-developer:hover::after {
+        opacity: 1;
+        transform: translate(2px, -2px);
       }
     }
   </style>
@@ -315,15 +418,17 @@
           <div class="launch-status" id="launchStatus" aria-live="polite" hidden>
             <span class="launch-status__kicker" id="launchStatusKicker"></span>
             <p class="launch-status__title">
-              <span id="launchStatusLead"></span><strong class="launch-status__highlight" id="launchStatusHighlight"></strong>
+              <span id="launchStatusLead"></span><strong class="launch-status__highlight"
+                id="launchStatusHighlight"></strong>
             </p>
             <span class="launch-status__rule" aria-hidden="true"></span>
             <p class="launch-status__sub" id="launchStatusSub"></p>
           </div>
 
           <p class="cd-caption" id="countdownCaption">Faltam para o lançamento, no dia 11 de setembro</p>
-          <a href="https://www.amazon.com.br/dp/B0HJBYMPZR/ref=mp_s_a_1_1?crid=3K2U5C9Z5D4BV&dib=eyJ2IjoiMSJ9.YlyxGwisrDa3qDnV0u-QEEXWohz8nEbCLAIsquaenWfNf5iiUB16h9qG-_--KOvYTPI65YmHmj3xDpbNdmT8Vw.cNkX0yG9-xN4MQ84iaETBEr9tyuZ7ePaU0CKVfbHmpA&dib_tag=se&keywords=taiane+almeida&qid=1789025018&sprefix=taiane+almeida%2Caps%2C266&sr=8-1" class="amazon-btn" id="amazonBtn"
-            target="_blank" rel="noopener noreferrer" aria-label="Comprar Necropolítica e Reflexões na Amazon">
+          <a href="https://www.amazon.com.br/dp/B0HJBYMPZR/ref=mp_s_a_1_1?crid=3K2U5C9Z5D4BV&dib=eyJ2IjoiMSJ9.YlyxGwisrDa3qDnV0u-QEEXWohz8nEbCLAIsquaenWfNf5iiUB16h9qG-_--KOvYTPI65YmHmj3xDpbNdmT8Vw.cNkX0yG9-xN4MQ84iaETBEr9tyuZ7ePaU0CKVfbHmpA&dib_tag=se&keywords=taiane+almeida&qid=1789025018&sprefix=taiane+almeida%2Caps%2C266&sr=8-1"
+            class="amazon-btn" id="amazonBtn" target="_blank" rel="noopener noreferrer"
+            aria-label="Comprar Necropolítica e Reflexões na Amazon">
             <svg class="amazon-icon" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M15.93 17.09c-2.1 1.55-5.14 2.38-7.76 2.38-3.67 0-6.98-1.36-9.48-3.62-.2-.18-.02-.42.22-.28 2.7 1.57 6.04 2.52 9.49 2.52 2.33 0 4.89-.48 7.24-1.48.35-.15.65.23.29.48z" />
@@ -334,8 +439,9 @@
             </svg>
             Comprar na Amazon
           </a>
-          <a href="https://elevenreader.io/audiobooks/necropolitica-e-reflexoes-acerca-da-populacao-negra-no-territorio-baiano-audiobook/pj_fUJaeqrqLPuU48S3MWjV?share=in_app" class="amazon-btn spotify-btn" id="audiobookBtn"
-            target="_blank" rel="noopener noreferrer" aria-label="Ouvir audiolivro completo no ElevenReader">
+          <a href="https://elevenreader.io/audiobooks/necropolitica-e-reflexoes-acerca-da-populacao-negra-no-territorio-baiano-audiobook/pj_fUJaeqrqLPuU48S3MWjV?share=in_app"
+            class="amazon-btn spotify-btn" id="audiobookBtn" target="_blank" rel="noopener noreferrer"
+            aria-label="Ouvir audiolivro completo no ElevenReader">
             <img class="amazon-icon" src="assets/audio/favicon.ico" width="20" height="20" alt="" aria-hidden="true">
             Ouvir no ElevenReader
           </a>
@@ -679,55 +785,66 @@
           <span class="pub-dot" aria-hidden="true"></span>
           <span class="pub-tag">
             <img class="pub-project-image" src="assets/pesquisa-producao/premio-culturas-populares.webp"
-              alt="Grupo de cultura popular em registro do Prêmio Culturas Populares" width="640" height="480" loading="lazy" decoding="async">
+              alt="Grupo de cultura popular em registro do Prêmio Culturas Populares" width="640" height="480"
+              loading="lazy" decoding="async">
             Ministério da Cultura · Cruz das Almas · 2018–2019
           </span>
           <h3 class="pub-title">Prêmio Culturas Populares</h3>
-          <p class="pub-desc">Coordenação da elaboração e execução de dois projetos aprovados no Prêmio Culturas Populares, do Ministério da Cultura, contemplando dois mestres da cultura popular, com acompanhamento e prestação de contas.</p>
+          <p class="pub-desc">Coordenação da elaboração e execução de dois projetos aprovados no Prêmio Culturas
+            Populares, do Ministério da Cultura, contemplando dois mestres da cultura popular, com acompanhamento e
+            prestação de contas.</p>
         </article>
 
         <article class="pub-item reveal">
           <span class="pub-dot" aria-hidden="true"></span>
           <span class="pub-tag">
             <img class="pub-project-image" src="assets/pesquisa-producao/ebateca.webp"
-              alt="Apresentação de dança registrada nos projetos com a EBATECA" width="561" height="429" loading="lazy" decoding="async">
+              alt="Apresentação de dança registrada nos projetos com a EBATECA" width="561" height="429" loading="lazy"
+              decoding="async">
             Cruz das Almas · 2019
           </span>
           <h3 class="pub-title">Cultura e formação com a EBATECA</h3>
-          <p class="pub-desc">Projetos idealizados em colaboração com a EBATECA para atividades destinadas ao público na reinauguração do Centro Pedagógico de Cruz das Almas, em 2019.</p>
+          <p class="pub-desc">Projetos idealizados em colaboração com a EBATECA para atividades destinadas ao público na
+            reinauguração do Centro Pedagógico de Cruz das Almas, em 2019.</p>
         </article>
 
         <article class="pub-item reveal">
           <span class="pub-dot" aria-hidden="true"></span>
           <span class="pub-tag">
             <img class="pub-project-image" src="assets/pesquisa-producao/rima-literaria.webp"
-              alt="Participantes reunidos em atividade do projeto Rima Literária" width="535" height="529" loading="lazy" decoding="async">
+              alt="Participantes reunidos em atividade do projeto Rima Literária" width="535" height="529"
+              loading="lazy" decoding="async">
             Coordenação pedagógica · Feira de Santana
           </span>
           <h3 class="pub-title">Rima Literária</h3>
-          <p class="pub-desc">Atuação como coordenadora pedagógica e colaboração na produção do relatório final de execução do projeto Rima Literária, em Feira de Santana.</p>
+          <p class="pub-desc">Atuação como coordenadora pedagógica e colaboração na produção do relatório final de
+            execução do projeto Rima Literária, em Feira de Santana.</p>
         </article>
 
         <article class="pub-item reveal">
           <span class="pub-dot" aria-hidden="true"></span>
           <span class="pub-tag">
             <img class="pub-project-image" src="assets/pesquisa-producao/tecendo-memorias.webp"
-              alt="Participantes realizando trabalho manual no projeto Tecendo Memórias" width="295" height="640" loading="lazy" decoding="async">
+              alt="Participantes realizando trabalho manual no projeto Tecendo Memórias" width="295" height="640"
+              loading="lazy" decoding="async">
             Santo Antônio de Jesus · 2026
           </span>
           <h3 class="pub-title">Tecendo Memórias</h3>
-          <p class="pub-desc">Colaboração como coordenadora pedagógica e participação na produção do relatório final de execução do projeto Tecendo Memórias, em Santo Antônio de Jesus, em 2026.</p>
+          <p class="pub-desc">Colaboração como coordenadora pedagógica e participação na produção do relatório final de
+            execução do projeto Tecendo Memórias, em Santo Antônio de Jesus, em 2026.</p>
         </article>
 
         <article class="pub-item reveal">
           <span class="pub-dot" aria-hidden="true"></span>
           <span class="pub-tag">
             <img class="pub-project-image" src="assets/pesquisa-producao/pesquisa-escola-publica.webp"
-              alt="Apresentação cultural em quadra de escola pública" width="640" height="480" loading="lazy" decoding="async">
+              alt="Apresentação cultural em quadra de escola pública" width="640" height="480" loading="lazy"
+              decoding="async">
             Pesquisa e antropologia · 2021–2026
           </span>
           <h3 class="pub-title">Pesquisa, cultura e arte na escola pública</h3>
-          <p class="pub-desc">Atuação como pesquisadora e antropóloga na produção de festivais de música, em pesquisa sobre mulheres cientistas e em projetos de cultura e arte na escola pública, entre 2021 e 2026.</p>
+          <p class="pub-desc">Atuação como pesquisadora e antropóloga na produção de festivais de música, em pesquisa
+            sobre mulheres cientistas e em projetos de cultura e arte na escola pública, entre 2021 e 2026.</p>
         </article>
       </div>
     </div>
@@ -760,11 +877,19 @@
               loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
-          <div class="colab-info">
+          <div class="colab-info colab-info--with-social">
             <div class="colab-text">
               <div class="colab-name">Carla Piaggio</div>
               <div class="colab-role">diretora criativa</div>
             </div>
+            <a class="colab-instagram" href="https://www.instagram.com/carlapiaggio/" target="_blank"
+              rel="noopener noreferrer" aria-label="Ver Instagram de Carla Piaggio" title="Instagram de Carla Piaggio">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="4.8" />
+                <circle cx="12" cy="12" r="3.8" />
+                <circle cx="17.3" cy="6.8" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
           </div>
         </div>
 
@@ -774,11 +899,20 @@
               height="900" loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
-          <div class="colab-info">
+          <div class="colab-info colab-info--with-social">
             <div class="colab-text">
               <div class="colab-name">Keille Lorainne</div>
               <div class="colab-role">designer e diagramadora</div>
             </div>
+            <a class="colab-instagram" href="https://www.instagram.com/keillelorainne/" target="_blank"
+              rel="noopener noreferrer" aria-label="Ver Instagram de Keille Lorainne"
+              title="Instagram de Keille Lorainne">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="4.8" />
+                <circle cx="12" cy="12" r="3.8" />
+                <circle cx="17.3" cy="6.8" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
           </div>
         </div>
 
@@ -802,11 +936,20 @@
               loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
-          <div class="colab-info">
+          <div class="colab-info colab-info--with-social">
             <div class="colab-text">
               <div class="colab-name">Murilo Gabriel</div>
               <div class="colab-role">Desenvolvedor do website</div>
             </div>
+            <a class="colab-instagram" href="https://www.instagram.com/murilo_gabriell0/" target="_blank"
+              rel="noopener noreferrer" aria-label="Ver Instagram de Murilo Gabriel"
+              title="Instagram de Murilo Gabriel">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="4.8" />
+                <circle cx="12" cy="12" r="3.8" />
+                <circle cx="17.3" cy="6.8" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
           </div>
         </div>
 
@@ -816,11 +959,19 @@
               loading="lazy" decoding="async">
           </div>
           <div class="colab-shine" aria-hidden="true"></div>
-          <div class="colab-info">
+          <div class="colab-info colab-info--with-social">
             <div class="colab-text">
               <div class="colab-name">Cicera Ramos</div>
               <div class="colab-role">Revisão textual</div>
             </div>
+            <a class="colab-instagram" href="https://www.instagram.com/ciceraport/" target="_blank"
+              rel="noopener noreferrer" aria-label="Ver Instagram de Cicera Ramos" title="Instagram de Cicera Ramos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="4.8" />
+                <circle cx="12" cy="12" r="3.8" />
+                <circle cx="17.3" cy="6.8" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>
@@ -858,7 +1009,9 @@
         <a href="https://www.instagram.com/taialmeida2/" target="_blank">Instagram</a>
       </div>
 
-      <p class="foot-legal">Site desenvolvido por Murilo Gabriel</p>
+      <p class="foot-legal">Site desenvolvido por <a class="foot-developer"
+          href="https://www.instagram.com/murilo_gabriell0/" target="_blank" rel="noopener noreferrer"
+          aria-label="Instagram de Murilo Gabriel">Murilo Gabriel</a></p>
     </div>
   </footer>
 
