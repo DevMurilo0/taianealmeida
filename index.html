@@ -426,19 +426,61 @@
           </div>
 
           <p class="cd-caption" id="countdownCaption">Faltam para o lançamento, no dia 11 de setembro</p>
-          <a href="https://www.amazon.com.br/dp/B0HJBYMPZR/ref=mp_s_a_1_1?crid=3K2U5C9Z5D4BV&dib=eyJ2IjoiMSJ9.YlyxGwisrDa3qDnV0u-QEEXWohz8nEbCLAIsquaenWfNf5iiUB16h9qG-_--KOvYTPI65YmHmj3xDpbNdmT8Vw.cNkX0yG9-xN4MQ84iaETBEr9tyuZ7ePaU0CKVfbHmpA&dib_tag=se&keywords=taiane+almeida&qid=1789025018&sprefix=taiane+almeida%2Caps%2C266&sr=8-1"
-            class="amazon-btn" id="amazonBtn" target="_blank" rel="noopener noreferrer"
-            aria-label="Comprar Necropolítica e Reflexões na Amazon">
-            <svg class="amazon-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M15.93 17.09c-2.1 1.55-5.14 2.38-7.76 2.38-3.67 0-6.98-1.36-9.48-3.62-.2-.18-.02-.42.22-.28 2.7 1.57 6.04 2.52 9.49 2.52 2.33 0 4.89-.48 7.24-1.48.35-.15.65.23.29.48z" />
-              <path
-                d="M16.8 16.05c-.27-.34-1.77-.16-2.45-.08-.2.02-.24-.15-.05-.29 1.2-.84 3.16-.6 3.39-.32.23.29-.06 2.28-1.18 3.23-.17.15-.34.07-.26-.12.26-.63.83-2.08.55-2.42z" />
-              <path
-                d="M14.5 7.5c0-.8.02-1.47-.4-2.01-.35-.46-.93-.68-1.62-.68-1.14 0-2.15.6-2.4 2.02-.05.27-.25.27-.42.24l-1.68-.18c-.14-.03-.3-.14-.26-.35.4-2.1 2.28-3.44 4.87-3.44 1.3 0 3 .35 4.02 1.35 1.02 1 1.1 2.35 1.1 3.6v4.63c0 .93.38 1.34.74 1.83.13.18.16.4-.01.54-.4.33-1.1.94-1.49 1.28-.19.16-.4.17-.55.05-.77-.67-.9-.98-1.33-1.62-1.27 1.3-2.17 1.69-3.82 1.69-1.94 0-3.46-1.2-3.46-3.6 0-1.87.99-3.14 2.4-3.76 1.22-.55 2.94-.65 4.25-.8v-.42zm-1.63 4.9c.32-.55.32-1.07.32-1.68v-.9c-1.65 0-3.39.35-3.39 2.29 0 .99.51 1.65 1.39 1.65.64 0 1.21-.4 1.68-1.36z" />
-            </svg>
-            Comprar na Amazon
-          </a>
+          <div class="purchase-picker">
+            <button class="amazon-btn purchase-trigger" id="purchaseTrigger" type="button"
+              aria-expanded="false" aria-controls="purchasePopover">
+              <svg class="amazon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                aria-hidden="true">
+                <path d="M6.5 8.5h11l-.8 10H7.3l-.8-10Z" stroke-linejoin="round" />
+                <path d="M9 9V6.8a3 3 0 0 1 6 0V9" stroke-linecap="round" />
+              </svg>
+              Compre aqui
+            </button>
+
+            <div class="purchase-popover" id="purchasePopover" role="dialog" aria-label="Escolha onde comprar"
+              aria-hidden="true">
+              <div class="purchase-popover__head">
+                <div>
+                  <span class="purchase-popover__eyebrow">Onde comprar</span>
+                  <strong>Escolha sua loja</strong>
+                </div>
+                <button class="purchase-popover__close" id="purchaseClose" type="button"
+                  aria-label="Fechar opções de compra">×</button>
+              </div>
+
+              <div class="purchase-popover__options">
+                <a class="purchase-store purchase-store--amazon"
+                  href="https://www.amazon.com.br/dp/B0HJBYMPZR/ref=mp_s_a_1_1?crid=3K2U5C9Z5D4BV&dib=eyJ2IjoiMSJ9.YlyxGwisrDa3qDnV0u-QEEXWohz8nEbCLAIsquaenWfNf5iiUB16h9qG-_--KOvYTPI65YmHmj3xDpbNdmT8Vw.cNkX0yG9-xN4MQ84iaETBEr9tyuZ7ePaU0CKVfbHmpA&dib_tag=se&keywords=taiane+almeida&qid=1789025018&sprefix=taiane+almeida%2Caps%2C266&sr=8-1"
+                  target="_blank" rel="noopener noreferrer" aria-label="Comprar o livro na Amazon">
+                  <span class="purchase-store__icon purchase-store__icon--amazon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M15.93 17.09c-2.1 1.55-5.14 2.38-7.76 2.38-3.67 0-6.98-1.36-9.48-3.62-.2-.18-.02-.42.22-.28 2.7 1.57 6.04 2.52 9.49 2.52 2.33 0 4.89-.48 7.24-1.48.35-.15.65.23.29.48z"/>
+                      <path d="M16.8 16.05c-.27-.34-1.77-.16-2.45-.08-.2.02-.24-.15-.05-.29 1.2-.84 3.16-.6 3.39-.32.23.29-.06 2.28-1.18 3.23-.17.15-.34.07-.26-.12.26-.63.83-2.08.55-2.42z"/>
+                      <path d="M14.5 7.5c0-.8.02-1.47-.4-2.01-.35-.46-.93-.68-1.62-.68-1.14 0-2.15.6-2.4 2.02-.05.27-.25.27-.42.24l-1.68-.18c-.14-.03-.3-.14-.26-.35.4-2.1 2.28-3.44 4.87-3.44 1.3 0 3 .35 4.02 1.35 1.02 1 1.1 2.35 1.1 3.6v4.63c0 .93.38 1.34.74 1.83.13.18.16.4-.01.54-.4.33-1.1.94-1.49 1.28-.19.16-.4.17-.55.05-.77-.67-.9-.98-1.33-1.62-1.27 1.3-2.17 1.69-3.82 1.69-1.94 0-3.46-1.2-3.46-3.6 0-1.87.99-3.14 2.4-3.76 1.22-.55 2.94-.65 4.25-.8v-.42zm-1.63 4.9c.32-.55.32-1.07.32-1.68v-.9c-1.65 0-3.39.35-3.39 2.29 0 .99.51 1.65 1.39 1.65.64 0 1.21-.4 1.68-1.36z"/>
+                    </svg>
+                  </span>
+                  <span>
+                    <strong>Amazon</strong>
+                    <small>Comprar na Amazon</small>
+                  </span>
+                  <span class="purchase-store__arrow" aria-hidden="true">↗</span>
+                </a>
+
+                <a class="purchase-store purchase-store--meli"
+                  href="https://www.mercadolivre.com.br/up/MLBU5191247456?matt_tool=38524122&pdp_filters=item_id:MLB5228814081&ua=j77wibmCCJ4pJVlVYn23KVY0wL6dqmTskOjUGGjT7Z9Uo0NJ#origin=share&sid=share&wid=MLB5228814081&action=copy"
+                  target="_blank" rel="noopener noreferrer" aria-label="Comprar o livro no Mercado Livre">
+                  <span class="purchase-store__icon purchase-store__icon--meli" aria-hidden="true">
+                    <img src="assets/mercado-livre-logo.webp" alt="" width="368" height="264" decoding="async">
+                  </span>
+                  <span>
+                    <strong>Mercado Livre</strong>
+                    <small>Comprar no Mercado Livre</small>
+                  </span>
+                  <span class="purchase-store__arrow" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
           <a href="https://elevenreader.io/audiobooks/necropolitica-e-reflexoes-acerca-da-populacao-negra-no-territorio-baiano-audiobook/pj_fUJaeqrqLPuU48S3MWjV?share=in_app"
             class="amazon-btn spotify-btn" id="audiobookBtn" target="_blank" rel="noopener noreferrer"
             aria-label="Ouvir audiolivro completo no ElevenReader">
@@ -972,6 +1014,20 @@
                 <circle cx="17.3" cy="6.8" r="1" fill="currentColor" stroke="none" />
               </svg>
             </a>
+          </div>
+        </div>
+
+        <div class="colab-card reveal from-bottom">
+          <div class="colab-photo">
+            <img src="assets/colaboradores/herbert-toledo-martins.webp" alt="Retrato de Herbert Toledo Martins"
+              width="1600" height="1066" loading="lazy" decoding="async">
+          </div>
+          <div class="colab-shine" aria-hidden="true"></div>
+          <div class="colab-info">
+            <div class="colab-text">
+              <div class="colab-name">Herbert Toledo Martins</div>
+              <div class="colab-role">coautor</div>
+            </div>
           </div>
         </div>
       </div>

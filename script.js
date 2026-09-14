@@ -1421,3 +1421,41 @@ setInterval(updateCountdown, 60000);
     });
   });
 })();
+
+
+// Seletor de loja para compra do livro.
+(function () {
+  const picker = document.querySelector('.purchase-picker');
+  const trigger = document.getElementById('purchaseTrigger');
+  const popover = document.getElementById('purchasePopover');
+  const close = document.getElementById('purchaseClose');
+  if (!picker || !trigger || !popover || !close) return;
+
+  function setOpen(open, returnFocus = false) {
+    picker.classList.toggle('is-open', open);
+    trigger.setAttribute('aria-expanded', String(open));
+    popover.setAttribute('aria-hidden', String(!open));
+    if (!open && returnFocus) trigger.focus();
+  }
+
+  trigger.addEventListener('click', () => {
+    const willOpen = !picker.classList.contains('is-open');
+    setOpen(willOpen);
+  });
+
+  close.addEventListener('click', () => setOpen(false, true));
+
+  picker.querySelectorAll('.purchase-store').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!picker.contains(event.target)) setOpen(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && picker.classList.contains('is-open')) {
+      setOpen(false, true);
+    }
+  });
+})();
