@@ -1,0 +1,25 @@
+ATUALIZAÇÃO SEO — TAIANE ALMEIDA
+
+Substitua na raiz do projeto:
+- index.html
+- sitemap.xml
+
+O robots.txt atual já está correto e não precisa ser alterado.
+
+Principais mudanças:
+- domínio canônico trocado de taianealmeida.vercel.app para taianealmeida.com.br
+- title e description mais focados em Taiane Almeida Santos
+- Open Graph e Twitter usando o domínio oficial
+- dados estruturados Schema.org para WebSite, Person, Book e WebPage
+- associação explícita entre Taiane Almeida, o site e o livro
+- profissão/áreas descritas naturalmente no JSON-LD
+- texto visível da seção da autora reforça professora/pesquisadora
+- sitemap com lastmod 2026-09-18
+
+Depois do deploy:
+1. confirme que https://taianealmeida.com.br/ abre normalmente
+2. confirme que https://taianealmeida.com.br/sitemap.xml abre normalmente
+3. no Search Console, inspecione https://taianealmeida.com.br/
+4. clique em "Solicitar indexação" para pedir novo rastreamento após essas alterações
+
+Não há garantia de posição específica para buscas amplas como "taiane almeida"; o objetivo é dar ao Google sinais mais claros sobre a identidade da autora e o domínio oficial.
